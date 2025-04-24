@@ -210,6 +210,13 @@ class Response implements ResponseInterface {
 
 	public function awaitArrayBuffer():ArrayBuffer {
 		$arrayBuffer = null;
+		if($bodyText = $this->getBody()->getContents()) {
+			$bytes = strlen($bodyText);
+			$arrayBuffer = new ArrayBuffer($bytes);
+			for($i = 0; $i < $bytes; $i++) {
+				$arrayBuffer->offsetSet($i, ord($bodyText[$i]));
+			}
+		}
 
 		$this->arrayBuffer()->then(function(ArrayBuffer $resolved) use(&$arrayBuffer) {
 			$arrayBuffer = $resolved;
@@ -239,6 +246,12 @@ class Response implements ResponseInterface {
 
 	public function awaitBlob():Blob {
 		$blob = null;
+		if($bodyText = $this->getBody()->getContents()) {
+			$blobOptions = [
+				"type" => $this->getResponseHeaders()->get("content-type")?->getValues()[0],
+			];
+			$blob = new Blob([$bodyText], $blobOptions);
+		}
 
 		$this->blob()->then(function(Blob $resolved) use(&$blob) {
 			$blob = $resolved;
@@ -277,6 +290,16 @@ class Response implements ResponseInterface {
 
 	public function awaitFormData():FormData {
 		$formData = null;
+		if($bodyText = $this->getBody()->getContents()) {
+			parse_str($bodyText, $bodyData);
+			$formData = new FormData();
+			foreach($bodyData as $key => $value) {
+				if(is_array($value)) {
+					$value = implode(",", $value);
+				}
+				$formData->set((string)$key, (string)$value);
+			}
+		}
 
 		$this->blob()->then(function(FormData $resolved) use(&$formData) {
 			$formData = $resolved;
@@ -308,6 +331,10 @@ class Response implements ResponseInterface {
 	/** @param int<1, max> $depth */
 	public function awaitJson(int $depth = 512, int $options = 0):JsonObject {
 		$jsonObject = null;
+		if($bodyText = $this->getBody()->getContents()) {
+			$builder = new JsonObjectBuilder();
+			$jsonObject = $builder->fromJsonString($bodyText);
+		}
 
 		$this->json($depth, $options)->then(function(JsonObject $resolved) use(&$jsonObject) {
 			$jsonObject = $resolved;
@@ -333,7 +360,7 @@ class Response implements ResponseInterface {
 	}
 
 	public function awaitText():string {
-		$text = null;
+		$text = $this->getBody()->getContents();
 
 		$this->text()->then(function(string $resolved) use(&$text) {
 			$text = $resolved;
