@@ -24,6 +24,8 @@ use Psr\Http\Message\UriInterface;
  * @property-read UriInterface $url
  * @SuppressWarnings("UnusedPrivateMethod")
  * @SuppressWarnings("TooManyPublicMethods")
+ * @SuppressWarnings("TooManyMethods")
+ * @SuppressWarnings("ExcessiveClassComplexity")
  */
 class Response implements ResponseInterface {
 	use Message;
@@ -196,11 +198,7 @@ class Response implements ResponseInterface {
 	public function arrayBuffer():Promise {
 		$promise = $this->getPromise();
 		$promise->then(function(string $responseText) {
-			$bytes = strlen($responseText);
-			$arrayBuffer = new ArrayBuffer($bytes);
-			for($i = 0; $i < $bytes; $i++) {
-				$arrayBuffer->offsetSet($i, ord($responseText[$i]));
-			}
+			$arrayBuffer = $this->arrayBufferFromResponseText($responseText);
 
 			$this->deferred->resolve($arrayBuffer);
 		});
@@ -210,12 +208,8 @@ class Response implements ResponseInterface {
 
 	public function awaitArrayBuffer():ArrayBuffer {
 		$arrayBuffer = null;
-		if($bodyText = $this->getBody()->getContents()) {
-			$bytes = strlen($bodyText);
-			$arrayBuffer = new ArrayBuffer($bytes);
-			for($i = 0; $i < $bytes; $i++) {
-				$arrayBuffer->offsetSet($i, ord($bodyText[$i]));
-			}
+		if($responseText = $this->getBody()->getContents()) {
+			$arrayBuffer = $this->arrayBufferFromResponseText($responseText);
 		}
 
 		$this->arrayBuffer()->then(function(ArrayBuffer $resolved) use(&$arrayBuffer) {
@@ -223,6 +217,14 @@ class Response implements ResponseInterface {
 		});
 
 		return $arrayBuffer;
+	}
+
+	private function arrayBufferFromResponseText(string $responseText):ArrayBuffer {
+		$bytes = strlen($responseText);
+		$arrayBuffer = new ArrayBuffer($bytes);
+		for($i = 0; $i < $bytes; $i++) {
+			$arrayBuffer->offsetSet($i, ord($responseText[$i]));
+		}
 	}
 
 	/**
@@ -235,10 +237,8 @@ class Response implements ResponseInterface {
 	public function blob():Promise {
 		$promise = $this->getPromise();
 		$promise->then(function(string $responseText) {
-			$blobOptions = [
-				"type" => $this->getResponseHeaders()->get("content-type")?->getValues()[0],
-			];
-			$this->deferred->resolve(new Blob([$responseText], $blobOptions));
+			$blob = $this->blobFromResponseText($responseText);
+			$this->deferred->resolve($blob);
 		});
 
 		return $promise;
@@ -246,11 +246,8 @@ class Response implements ResponseInterface {
 
 	public function awaitBlob():Blob {
 		$blob = null;
-		if($bodyText = $this->getBody()->getContents()) {
-			$blobOptions = [
-				"type" => $this->getResponseHeaders()->get("content-type")?->getValues()[0],
-			];
-			$blob = new Blob([$bodyText], $blobOptions);
+		if($responseText = $this->getBody()->getContents()) {
+			$blob = $this->blobFromResponseText($responseText);
 		}
 
 		$this->blob()->then(function(Blob $resolved) use(&$blob) {
@@ -258,6 +255,13 @@ class Response implements ResponseInterface {
 		});
 
 		return $blob;
+	}
+
+	private function blobFromResponseText(string $responseText):Blob {
+		$blobOptions = [
+			"type" => $this->getResponseHeaders()->get("content-type")?->getValues()[0],
+		];
+		return new Blob([$responseText], $blobOptions);
 	}
 
 	/**
@@ -272,16 +276,9 @@ class Response implements ResponseInterface {
 		$newPromise = $newDeferred->getPromise();
 
 		$deferredPromise = $this->getPromise();
-		$deferredPromise->then(function(string $resolvedValue)
+		$deferredPromise->then(function(string $responseText)
 		use($newDeferred) {
-			parse_str($resolvedValue, $bodyData);
-			$formData = new FormData();
-			foreach($bodyData as $key => $value) {
-				if(is_array($value)) {
-					$value = implode(",", $value);
-				}
-				$formData->set((string)$key, (string)$value);
-			}
+			$formData = $this->formDataFromResponseText($responseText);
 			$newDeferred->resolve($formData);
 		});
 
@@ -290,21 +287,26 @@ class Response implements ResponseInterface {
 
 	public function awaitFormData():FormData {
 		$formData = null;
-		if($bodyText = $this->getBody()->getContents()) {
-			parse_str($bodyText, $bodyData);
-			$formData = new FormData();
-			foreach($bodyData as $key => $value) {
-				if(is_array($value)) {
-					$value = implode(",", $value);
-				}
-				$formData->set((string)$key, (string)$value);
-			}
+		if($responseText = $this->getBody()->getContents()) {
+			$formData = $this->formDataFromResponseText($responseText);
 		}
 
 		$this->blob()->then(function(FormData $resolved) use(&$formData) {
 			$formData = $resolved;
 		});
 
+		return $formData;
+	}
+
+	private function formDataFromResponseText(string $responseText):FormData {
+		parse_str($responseText, $bodyData);
+		$formData = new FormData();
+		foreach($bodyData as $key => $value) {
+			if(is_array($value)) {
+				$value = implode(",", $value);
+			}
+			$formData->set((string)$key, (string)$value);
+		}
 		return $formData;
 	}
 
@@ -320,8 +322,7 @@ class Response implements ResponseInterface {
 	public function json(int $depth = 512, int $options = 0):Promise {
 		$promise = $this->getPromise();
 		$promise->then(function(string $responseText)use($depth, $options) {
-			$builder = new JsonObjectBuilder($depth, $options);
-			$json = $builder->fromJsonString($responseText);
+			$json = $this->jsonFromResponseText($responseText, $depth, $options);
 			$this->deferred->resolve($json);
 		});
 
@@ -331,9 +332,8 @@ class Response implements ResponseInterface {
 	/** @param int<1, max> $depth */
 	public function awaitJson(int $depth = 512, int $options = 0):JsonObject {
 		$jsonObject = null;
-		if($bodyText = $this->getBody()->getContents()) {
-			$builder = new JsonObjectBuilder();
-			$jsonObject = $builder->fromJsonString($bodyText);
+		if($responseText = $this->getBody()->getContents()) {
+			$jsonObject = $this->jsonFromResponseText($responseText);
 		}
 
 		$this->json($depth, $options)->then(function(JsonObject $resolved) use(&$jsonObject) {
@@ -341,6 +341,11 @@ class Response implements ResponseInterface {
 		});
 
 		return $jsonObject;
+	}
+
+	private function jsonFromResponseText(string $responseText, int $depth = 512, int $options = 0):JsonObject {
+		$builder = new JsonObjectBuilder($depth, $options);
+		return $builder->fromJsonString($responseText);
 	}
 
 	/**
