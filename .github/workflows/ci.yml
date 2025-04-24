@@ -114,7 +114,6 @@ jobs:
         with:
           php_version: ${{ matrix.php }}
           path: src/
-          configuration: phpstan.neon
 
   phpmd:
     runs-on: ubuntu-latest
