@@ -246,7 +246,7 @@ abstract class KeyValuePairStore {
 	protected function appendAnyValue(
 		string $name,
 		mixed $value,
-		string $filename = null
+		?string $filename = null
 	):void {
 		if(is_array($this->kvp[$name] ?? null)) {
 			array_push($this->kvp[$name], $value);
@@ -267,7 +267,7 @@ abstract class KeyValuePairStore {
 	protected function setAnyValue(
 		string $name,
 		mixed $value,
-		string $filename = null
+		?string $filename = null
 	):void {
 		if(!is_null($filename)) {
 			if($value instanceof Blob) {

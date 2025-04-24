@@ -38,7 +38,7 @@ class Response implements ResponseInterface {
 
 	public function __construct(
 		private ?int $statusCode = null,
-		ResponseHeaders $headers = null,
+		?ResponseHeaders $headers = null,
 		private readonly ?Request $request = null,
 	) {
 		$this->headers = $headers ?? new ResponseHeaders();
@@ -177,7 +177,7 @@ class Response implements ResponseInterface {
 		return $this->deferred;
 	}
 
-	public function endDeferredResponse(string $integrity = null):void {
+	public function endDeferredResponse(?string $integrity = null):void {
 		$position = $this->stream->tell();
 		$this->stream->rewind();
 		$contents = $this->stream->getContents();

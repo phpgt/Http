@@ -30,7 +30,7 @@ class ArrayBuffer extends SplFixedArray implements Stringable {
 	// phpcs:ignore
 	public function transfer(
 		self $oldBuffer,
-		int $newByteLength = null
+		?int $newByteLength = null
 	):self {
 		return $this;
 	}

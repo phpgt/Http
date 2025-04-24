@@ -18,7 +18,7 @@ class Uri implements UriInterface {
 	protected string $query;
 	protected string $fragment;
 
-	public function __construct(string $uri = null) {
+	public function __construct(?string $uri = null) {
 		if(is_null($uri)) {
 			return;
 		}
@@ -95,7 +95,7 @@ class Uri implements UriInterface {
 		return strtolower($host);
 	}
 
-	protected function filterPort(int $port = null):?string {
+	protected function filterPort(?int $port = null):?string {
 		if(is_null($port)) {
 			return null;
 		}
@@ -136,7 +136,7 @@ class Uri implements UriInterface {
 		return rawurlencode($match[0]);
 	}
 
-	protected function filterUserInfo(string $user, string $pass = null):string {
+	protected function filterUserInfo(string $user, ?string $pass = null):string {
 		$userInfo = $user;
 
 		if(strlen($pass ?? "") > 0) {
@@ -267,7 +267,7 @@ class Uri implements UriInterface {
 		return $clone;
 	}
 
-	public function withQueryValue(string $key, string $value = null):self {
+	public function withQueryValue(string $key, ?string $value = null):self {
 // TODO: Hotspot for refactoring opportunity.
 // http_build_query should help simplify all of this messy code.
 // Note limitation of http_build_query can be resolved using $replaceQuery below
@@ -371,7 +371,7 @@ class Uri implements UriInterface {
 			&& (!isset($this->getPath()[0]) || $this->getPath()[0] !== '/');
 	}
 
-	public function isSameDocumentReference(Uri $baseUri = null):bool {
+	public function isSameDocumentReference(?Uri $baseUri = null):bool {
 		if(!is_null($baseUri)) {
 			$resolver = new UriResolver();
 			$resolved = $resolver->resolve($baseUri, $this);

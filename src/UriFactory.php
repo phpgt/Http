@@ -30,11 +30,11 @@ class UriFactory {
 	 * @link https://tools.ietf.org/html/rfc3986#section-5.3
 	 */
 	public function composeFromComponents(
-		string $scheme = null,
-		string $authority = null,
-		string $path = null,
-		string $query = null,
-		string $fragment = null
+		?string $scheme = null,
+		?string $authority = null,
+		?string $path = null,
+		?string $query = null,
+		?string $fragment = null
 	):Uri {
 		$uri = "";
 

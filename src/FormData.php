@@ -106,7 +106,7 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 	public function append(
 		string $name,
 		Blob|File|SplFileObject|string $value,
-		string $filename = null
+		?string $filename = null
 	):void {
 		$value = $this->normaliseFileValue($value);
 		$this->appendAnyValue($name, $value, $filename);
