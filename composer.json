@@ -2,21 +2,14 @@
 	"name": "phpgt/http",
 	"description": "PSR-7 HTTP message implementation.",
 	"license": "MIT",
-	"version": "1.3.1",
-
-	"extra": {
-		"branch-alias": {
-			"dev-master": "1.3.1-dev",
-			"dev-222-redirect": "1.3.1-dev"
-		}
-	},
+	"version": "v1.3.2",
 
 	"require": {
 		"php": ">=8.3",
 		"ext-dom": "*",
 		"ext-curl": "*",
 		"ext-fileinfo": "*",
-		"phpgt/input": "^1.2",
+		"phpgt/input": "^1.3",
 		"phpgt/typesafegetter": "^1.3",
 		"phpgt/promise": "^2.4",
 		"phpgt/async": "^1.0",
