@@ -2,7 +2,7 @@
 	"name": "phpgt/http",
 	"description": "PSR-7 HTTP message implementation.",
 	"license": "MIT",
-	"version": "v1.3.2",
+	"version": "v1.3.3",
 
 	"require": {
 		"php": ">=8.3",
