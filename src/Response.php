@@ -198,9 +198,7 @@ class Response implements ResponseInterface {
 	public function arrayBuffer():Promise {
 		$promise = $this->getPromise();
 		$promise->then(function(string $responseText) {
-			$arrayBuffer = $this->arrayBufferFromResponseText($responseText);
-
-			$this->deferred->resolve($arrayBuffer);
+			return $this->arrayBufferFromResponseText($responseText);
 		});
 
 		return $promise;
@@ -237,8 +235,7 @@ class Response implements ResponseInterface {
 	public function blob():Promise {
 		$promise = $this->getPromise();
 		$promise->then(function(string $responseText) {
-			$blob = $this->blobFromResponseText($responseText);
-			$this->deferred->resolve($blob);
+			return $this->blobFromResponseText($responseText);
 		});
 
 		return $promise;
@@ -322,8 +319,7 @@ class Response implements ResponseInterface {
 	public function json(int $depth = 512, int $options = 0):Promise {
 		$promise = $this->getPromise();
 		$promise->then(function(string $responseText)use($depth, $options) {
-			$json = $this->jsonFromResponseText($responseText, $depth, $options);
-			$this->deferred->resolve($json);
+			return $this->jsonFromResponseText($responseText, $depth, $options);
 		});
 
 		return $promise;

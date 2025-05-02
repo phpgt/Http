@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Http\FormData;
 use Gt\Http\Header\ResponseHeaders;
 use Gt\Http\Request;
 use Gt\Http\Response;
@@ -8,6 +9,7 @@ use Gt\Http\StatusCode;
 use Gt\Http\Stream;
 use Gt\Http\Uri;
 use Gt\Json\JsonObject;
+use Gt\Promise\Deferred;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase {
@@ -153,6 +155,29 @@ class ResponseTest extends TestCase {
 
 		$actualText = $sut->awaitText();
 		self::assertSame($responseText, $actualText);
+	}
+
+	public function testFormData():void {
+		$data = [
+			"name" => "Cody",
+			"colour" => "orange",
+		];
+
+		$stream = new Stream();
+		$stream->write(http_build_query($data));
+
+		$sut = new Response();
+		$sut = $sut->withHeader("Content-type", "application/x-www-form-urlencoded");
+		$sut = $sut->withBody($stream);
+
+		$actualFormData = null;
+		$sut->formData()->then(function($formData) use(&$actualFormData) {
+			$actualFormData = $formData;
+		});
+
+		self::assertInstanceOf(FormData::class, $actualFormData);
+		self::assertSame("Cody", $actualFormData->getString("name"));
+		self::assertSame("orange", $actualFormData->getString("colour"));
 	}
 
 	public function testRedirect_sendsFileLineDebug():void {
