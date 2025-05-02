@@ -180,6 +180,25 @@ class ResponseTest extends TestCase {
 		self::assertSame("orange", $actualFormData->getString("colour"));
 	}
 
+	public function testAwaitFormData():void {
+		$data = [
+			"name" => "Cody",
+			"colour" => "orange",
+		];
+
+		$stream = new Stream();
+		$stream->write(http_build_query($data));
+
+		$sut = new Response();
+		$sut = $sut->withHeader("Content-type", "application/x-www-form-urlencoded");
+		$sut = $sut->withBody($stream);
+
+		$formData = $sut->awaitFormData();
+		self::assertInstanceOf(FormData::class, $formData);
+		self::assertSame("Cody", $formData->getString("name"));
+		self::assertSame("orange", $formData->getString("colour"));
+	}
+
 	public function testRedirect_sendsFileLineDebug():void {
 		$sut = (new Response());
 		$sut->redirect("/somewhere");
