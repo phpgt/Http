@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Curl\Curl;
 use Gt\Http\ArrayBuffer;
 use Gt\Http\Blob;
 use Gt\Http\FormData;
@@ -293,5 +294,30 @@ class ResponseTest extends TestCase {
 
 		self::assertSame("./", $actualLocation);
 		self::assertSame("$expectedFile:$expectedLine", $actualDebugLocation);
+	}
+
+	public function testPropGetRedirected_noCurl():void {
+		$sut = new Response();
+		self::assertFalse($sut->redirected);
+	}
+
+	public function testPropGetRedirected_redirect():void {
+		$curl = self::createMock(Curl::class);
+		$curl->expects(self::exactly(1))
+			->method("getInfo")
+			->with(CURLINFO_REDIRECT_COUNT)
+			->willReturn(5);
+		$sut = new Response(200, curl: $curl);
+		self::assertTrue($sut->redirected);
+	}
+
+	public function testPropGetRedirected_noRedirect():void {
+		$curl = self::createMock(Curl::class);
+		$curl->expects(self::exactly(1))
+			->method("getInfo")
+			->with(CURLINFO_REDIRECT_COUNT)
+			->willReturn(0);
+		$sut = new Response(200, curl: $curl);
+		self::assertFalse($sut->redirected);
 	}
 }

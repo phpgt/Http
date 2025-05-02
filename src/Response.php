@@ -34,12 +34,12 @@ class Response implements ResponseInterface {
 	/** @var null|callable */
 	private $exitCallback;
 	private Deferred $deferred;
-	private CurlInterface $curl;
 
 	public function __construct(
 		private ?int $statusCode = null,
 		?ResponseHeaders $headers = null,
 		private readonly ?Request $request = null,
+		private readonly ?CurlInterface $curl = null,
 	) {
 		$this->headers = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
@@ -322,6 +322,7 @@ class Response implements ResponseInterface {
 		return $jsonObject;
 	}
 
+	/** @param int<1, max> $depth */
 	private function jsonFromResponseText(string $responseText, int $depth = 512, int $options = 0):JsonObject {
 		$builder = new JsonObjectBuilder($depth, $options);
 		return $builder->fromJsonString($responseText);
@@ -360,24 +361,5 @@ class Response implements ResponseInterface {
 		}
 
 		return $this->deferred->getPromise();
-	}
-
-	private function checkIntegrity(?string $integrity, string $contents):void {
-		if(is_null($integrity)) {
-			return;
-		}
-
-		[$algo, $hash] = explode("-", $integrity);
-
-		$availableAlgos = hash_algos();
-		if(!in_array($algo, $availableAlgos)) {
-			throw new InvalidIntegrityAlgorithmException($algo);
-		}
-
-		$hashedContents = hash($algo, $contents);
-
-		if($hashedContents !== $hash) {
-			throw new IntegrityMismatchException();
-		}
 	}
 }
