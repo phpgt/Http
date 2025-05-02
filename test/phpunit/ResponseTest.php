@@ -2,6 +2,7 @@
 namespace Gt\Http\Test;
 
 use Gt\Http\ArrayBuffer;
+use Gt\Http\Blob;
 use Gt\Http\FormData;
 use Gt\Http\Header\ResponseHeaders;
 use Gt\Http\Request;
@@ -162,6 +163,23 @@ class ResponseTest extends TestCase {
 
 		$actualJson = $sut->awaitJson();
 		self::assertSame("phpgt", $actualJson->getString("name"));
+	}
+
+	public function testBlob():void {
+		$blobString = random_bytes(32);
+
+		$stream = new Stream();
+		$stream->write($blobString);
+
+		$sut = (new Response())->withBody($stream);
+
+		$actualBlob = null;
+		$sut->blob()->then(function($blob) use(&$actualBlob) {
+			$actualBlob = $blob;
+		});
+
+		self::assertInstanceOf(Blob::class, $actualBlob);
+		self::assertSame(32, $actualBlob->size);
 	}
 
 	public function testAwaitBlob():void {

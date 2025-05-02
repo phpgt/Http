@@ -33,7 +33,7 @@ class Blob implements Stringable {
 	public function __get(string $name):mixed {
 		switch($name) {
 		case "size":
-			return $this->size;
+			return strlen($this->content);
 
 		case "type":
 			return $this->type;
