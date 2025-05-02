@@ -34,15 +34,19 @@ class Response implements ResponseInterface {
 	/** @var null|callable */
 	private $exitCallback;
 	private Deferred $deferred;
+	private CurlInterface $curl;
 
 	public function __construct(
 		private ?int $statusCode = null,
 		?ResponseHeaders $headers = null,
 		private readonly ?Request $request = null,
-		private readonly ?CurlInterface $curl = null,
+		?CurlInterface $curl = null,
 	) {
 		$this->headers = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
+		if($curl) {
+			$this->curl = $curl;
+		}
 	}
 
 	/** @phpstan-ignore-next-line */
@@ -167,6 +171,42 @@ class Response implements ResponseInterface {
 
 	public function getResponseHeaders():ResponseHeaders {
 		return $this->headers;
+	}
+
+	public function startDeferredResponse(
+		CurlInterface $curl
+	):Deferred {
+		$this->deferred = new Deferred();
+		$this->curl = $curl;
+		return $this->deferred;
+	}
+
+	public function endDeferredResponse(?string $integrity = null):void {
+		$position = $this->stream->tell();
+		$this->stream->rewind();
+		$contents = $this->stream->getContents();
+		$this->stream->seek($position);
+		$this->checkIntegrity($integrity, $contents);
+		$this->deferred->resolve($contents);
+	}
+
+	private function checkIntegrity(?string $integrity, string $contents):void {
+		if(is_null($integrity)) {
+			return;
+		}
+
+		[$algo, $hash] = explode("-", $integrity);
+
+		$availableAlgos = hash_algos();
+		if(!in_array($algo, $availableAlgos)) {
+			throw new InvalidIntegrityAlgorithmException($algo);
+		}
+
+		$hashedContents = hash($algo, $contents);
+
+		if($hashedContents !== $hash) {
+			throw new IntegrityMismatchException();
+		}
 	}
 
 	/**
