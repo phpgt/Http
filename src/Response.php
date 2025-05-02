@@ -337,7 +337,7 @@ class Response implements ResponseInterface {
 	public function text():Promise {
 		$promise = $this->getPromise();
 		$promise->then(function(string $responseText) {
-			$this->deferred->resolve($responseText);
+			return $responseText;
 		});
 
 		return $promise;

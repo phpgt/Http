@@ -194,6 +194,22 @@ class ResponseTest extends TestCase {
 		self::assertSame($blobString, $actualBlob->getContent());
 	}
 
+	public function testText():void {
+		$responseText = uniqid("Test!" );
+
+		$stream = new Stream();
+		$stream->write($responseText);
+
+		$sut = (new Response())->withBody($stream);
+
+		$actualText = null;
+		$sut->text()->then(function($text) use(&$actualText){
+			$actualText = $text;
+		});
+
+		self::assertSame($responseText, $actualText);
+	}
+
 	public function testAwaitText():void {
 		$responseText = uniqid("Test! ");
 
