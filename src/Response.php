@@ -1,14 +1,12 @@
 <?php /** @noinspection PhpUnusedPrivateMethodInspection */
 namespace Gt\Http;
 
-use Gt\Async\Loop;
 use Gt\Curl\CurlInterface;
 use Gt\Http\Header\ResponseHeaders;
 use Gt\Json\JsonObject;
 use Gt\Json\JsonObjectBuilder;
 use Gt\Promise\Deferred;
 use Gt\Promise\Promise;
-use Gt\Promise\PromiseState;
 use Gt\PropFunc\MagicProp;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
@@ -171,23 +169,6 @@ class Response implements ResponseInterface {
 		return $this->headers;
 	}
 
-	public function startDeferredResponse(
-		CurlInterface $curl
-	):Deferred {
-		$this->deferred = new Deferred();
-		$this->curl = $curl;
-		return $this->deferred;
-	}
-
-	public function endDeferredResponse(?string $integrity = null):void {
-		$position = $this->stream->tell();
-		$this->stream->rewind();
-		$contents = $this->stream->getContents();
-		$this->stream->seek($position);
-		$this->checkIntegrity($integrity, $contents);
-		$this->deferred->resolve($contents);
-	}
-
 	/**
 	 * Takes the Response's stream and reads it to completion. Returns a Promise which resolves with the result
 	 * as a Gt\Http\ArrayBuffer.
@@ -223,6 +204,8 @@ class Response implements ResponseInterface {
 		for($i = 0; $i < $bytes; $i++) {
 			$arrayBuffer->offsetSet($i, ord($responseText[$i]));
 		}
+
+		return $arrayBuffer;
 	}
 
 	/**

@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Http\ArrayBuffer;
 use Gt\Http\FormData;
 use Gt\Http\Header\ResponseHeaders;
 use Gt\Http\Request;
@@ -102,6 +103,36 @@ class ResponseTest extends TestCase {
 		$sut->reloadWithoutQuery();
 		self::assertSame(StatusCode::SEE_OTHER, $sut->getStatusCode());
 		self::assertSame($expectedRelativePath, $sut->getHeaderLine("Location"));
+	}
+
+	public function testArrayBuffer():void {
+		$bodyData = random_bytes(1050);
+		$stream = new Stream();
+		$stream->write($bodyData);
+
+		$sut = new Response();
+		$sut = $sut->withBody($stream);
+
+		$actualArrayBuffer = null;
+		$sut->arrayBuffer()->then(function($arrayBuffer) use(&$actualArrayBuffer) {
+			$actualArrayBuffer = $arrayBuffer;
+		});
+
+		self::assertInstanceOf(ArrayBuffer::class, $actualArrayBuffer);
+		self::assertSame(1050, $actualArrayBuffer->byteLength);
+	}
+
+	public function testAsyncArrayBuffer():void {
+		$bodyData = random_bytes(1050);
+		$stream = new Stream();
+		$stream->write($bodyData);
+
+		$sut = new Response();
+		$sut = $sut->withBody($stream);
+
+		$arrayBuffer = $sut->awaitArrayBuffer();
+		self::assertInstanceOf(ArrayBuffer::class, $arrayBuffer);
+		self::assertSame(1050, $arrayBuffer->byteLength);
 	}
 
 	public function testJson():void {
