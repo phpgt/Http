@@ -113,6 +113,7 @@ jobs:
         uses: php-actions/phpstan@v3
         with:
           php_version: ${{ matrix.php }}
+          level: 7
           path: src/
 
   phpmd:
