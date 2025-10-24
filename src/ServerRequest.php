@@ -93,7 +93,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @return array<string, string|array<string>>
 	 */
 	public function getQueryParams():array {
-		parse_str($this->serverData["QUERY_STRING"], $params);
+		parse_str($this->serverData["QUERY_STRING"] ?? "", $params);
 		/** @var array<string, string|array<string>> $params */
 		return $params;
 	}
