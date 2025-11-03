@@ -29,6 +29,12 @@ class ResponseTest extends TestCase {
 		);
 	}
 
+	public function testSetStatus() {
+		$sut = new Response(123);
+		$sut->setStatus(321);
+		self::assertSame(321, $sut->getStatusCode());
+	}
+
 	public function testGetReasonPhraseDefault() {
 		$notFound = new Response(404);
 		self::assertEquals("Not Found", $notFound->getReasonPhrase());

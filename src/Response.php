@@ -104,6 +104,14 @@ class Response implements ResponseInterface {
 		$this->exitCallback = $callback;
 	}
 
+	public function abort(?int $statusCode = null):void {
+		if($statusCode) {
+			$this->setStatus($statusCode);
+		}
+
+		call_user_func($this->exitCallback);
+	}
+
 	public function reload():void {
 		$this->redirect($this->request?->getUri() ?? new Uri("./"));
 	}
@@ -162,6 +170,10 @@ class Response implements ResponseInterface {
 		$clone = clone $this;
 		$clone->statusCode = $code;
 		return $clone;
+	}
+
+	public function setStatus(int $code):void {
+		$this->statusCode = $code;
 	}
 
 	/** @inheritDoc */
