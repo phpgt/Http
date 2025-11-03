@@ -35,6 +35,31 @@ class ResponseTest extends TestCase {
 		self::assertSame(321, $sut->getStatusCode());
 	}
 
+	public function testAbort() {
+		$called = false;
+		$exitCallback = function()use(&$called) {
+			$called = true;
+		};
+
+		$sut = new Response();
+		$sut->setExitCallback($exitCallback);
+		$sut->abort();
+		self::assertTrue($called);
+	}
+
+	public function testAbort_withNewStatus() {
+		$called = false;
+		$exitCallback = function()use(&$called) {
+			$called = true;
+		};
+
+		$sut = new Response(500);
+		$sut->setExitCallback($exitCallback);
+		$sut->abort(503);
+		self::assertTrue($called);
+		self::assertSame(503, $sut->getStatusCode());
+	}
+
 	public function testGetReasonPhraseDefault() {
 		$notFound = new Response(404);
 		self::assertEquals("Not Found", $notFound->getReasonPhrase());
