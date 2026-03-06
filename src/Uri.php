@@ -23,11 +23,96 @@ class Uri implements UriInterface {
 			return;
 		}
 
-		$parts = parse_url($uri);
+		$parts = $this->parseUri($uri);
 		if($parts === false) {
 			throw new UriParseErrorException($uri);
 		}
 		$this->applyParts($parts);
+	}
+
+	/** @return false|array<string, int|string> */
+	protected function parseUri(string $uri):false|array {
+		$parts = parse_url($uri);
+		if($parts === false) {
+			return false;
+		}
+
+		$authorityStyleParts = $this->parseAuthorityStyleParts($uri, $parts);
+		if(!is_null($authorityStyleParts)) {
+			return $authorityStyleParts;
+		}
+
+		return $parts;
+	}
+
+	/**
+	 * @param array<string, int|string> $parts
+	 * @return null|array<string, int|string>
+	 */
+	protected function parseAuthorityStyleParts(
+		string $uri,
+		array $parts
+	):?array {
+		if(!$this->canBeAuthorityStyleUri($uri, $parts)) {
+			return null;
+		}
+
+		$authorityParts = parse_url("//" . $uri);
+		if($authorityParts === false) {
+			return null;
+		}
+
+		if(!$this->hasRequiredAuthorityParts($authorityParts)) {
+			return null;
+		}
+
+		if(!$this->isAuthorityPathValid($authorityParts)) {
+			return null;
+		}
+
+		if(!$this->isAuthorityHostLike($authorityParts)) {
+			return null;
+		}
+
+		return $authorityParts;
+	}
+
+	/** @param array<string, int|string> $parts */
+	protected function canBeAuthorityStyleUri(string $uri, array $parts):bool {
+		if(str_contains($uri, "://")) {
+			return false;
+		}
+
+		if(!isset($parts["scheme"]) || isset($parts["host"])) {
+			return false;
+		}
+
+		$path = (string)($parts["path"] ?? "");
+		return str_contains($path, "@");
+	}
+
+	/** @param array<string, int|string> $authorityParts */
+	protected function hasRequiredAuthorityParts(array $authorityParts):bool {
+		return isset($authorityParts["user"], $authorityParts["pass"], $authorityParts["host"]);
+	}
+
+	/** @param array<string, int|string> $authorityParts */
+	protected function isAuthorityPathValid(array $authorityParts):bool {
+		$authorityPath = (string)($authorityParts["path"] ?? "");
+		return strlen($authorityPath) === 0 || str_starts_with($authorityPath, "/");
+	}
+
+	/** @param array<string, int|string> $authorityParts */
+	protected function isAuthorityHostLike(array $authorityParts):bool {
+		$host = (string)$authorityParts["host"];
+		if(filter_var($host, FILTER_VALIDATE_IP) !== false) {
+			return true;
+		}
+
+		return str_contains($host, ".")
+			|| str_contains($host, ":")
+			|| str_starts_with($host, "[")
+			|| $host === self::DEFAULT_HOST_HTTP;
 	}
 
 	/** @inheritDoc */
