@@ -169,6 +169,57 @@ class UriTest extends TestCase {
 		$this->assertSame('0://0:0@0/0?0#0', (string)$uri);
 	}
 
+	public function testParsesAuthorityStyleCredentialsWithoutScheme() {
+		$uri = new Uri('admin:admin@10.10.0.8/status.xml');
+		$this->assertSame('', $uri->getScheme());
+		$this->assertSame('admin:admin', $uri->getUserInfo());
+		$this->assertSame('10.10.0.8', $uri->getHost());
+		$this->assertSame('/status.xml', $uri->getPath());
+	}
+
+	public function testBuildsAuthorityFromCredentialsWithoutScheme() {
+		$uri = new Uri('admin:admin@10.10.0.8/status.xml');
+		$this->assertSame('admin:admin@10.10.0.8', $uri->getAuthority());
+	}
+
+	public function testKeepsOriginalParseWhenAuthorityFallbackCannotParseDoubleSlash() {
+		$uri = new Uri('admin:admin@?/x');
+		$this->assertSame('admin', $uri->getScheme());
+		$this->assertSame('admin@', $uri->getPath());
+		$this->assertSame('/x', $uri->getQuery());
+	}
+
+	public function testKeepsOriginalParseWhenAuthorityHostIsNotHostLike() {
+		$uri = new Uri('admin:admin@example/status.xml');
+		$this->assertSame('admin', $uri->getScheme());
+		$this->assertSame('', $uri->getAuthority());
+		$this->assertSame('admin@example/status.xml', $uri->getPath());
+	}
+
+	public function testCanRejectAuthorityFallbackWhenRequiredAuthorityPartsAreMissing() {
+		$uri = new class('admin:admin@10.10.0.8/status.xml') extends Uri {
+			protected function hasRequiredAuthorityParts(array $authorityParts):bool {
+				return false;
+			}
+		};
+
+		$this->assertSame('admin', $uri->getScheme());
+		$this->assertSame('', $uri->getAuthority());
+		$this->assertSame('admin@10.10.0.8/status.xml', $uri->getPath());
+	}
+
+	public function testCanRejectAuthorityFallbackWhenAuthorityPathIsInvalid() {
+		$uri = new class('admin:admin@10.10.0.8/status.xml') extends Uri {
+			protected function isAuthorityPathValid(array $authorityParts):bool {
+				return false;
+			}
+		};
+
+		$this->assertSame('admin', $uri->getScheme());
+		$this->assertSame('', $uri->getAuthority());
+		$this->assertSame('admin@10.10.0.8/status.xml', $uri->getPath());
+	}
+
 	/**
 	 * @dataProvider getPortTestCases
 	 */
