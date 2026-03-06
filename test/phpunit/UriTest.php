@@ -169,6 +169,19 @@ class UriTest extends TestCase {
 		$this->assertSame('0://0:0@0/0?0#0', (string)$uri);
 	}
 
+	public function testParsesAuthorityStyleCredentialsWithoutScheme() {
+		$uri = new Uri('admin:admin@10.10.0.8/status.xml');
+		$this->assertSame('', $uri->getScheme());
+		$this->assertSame('admin:admin', $uri->getUserInfo());
+		$this->assertSame('10.10.0.8', $uri->getHost());
+		$this->assertSame('/status.xml', $uri->getPath());
+	}
+
+	public function testBuildsAuthorityFromCredentialsWithoutScheme() {
+		$uri = new Uri('admin:admin@10.10.0.8/status.xml');
+		$this->assertSame('admin:admin@10.10.0.8', $uri->getAuthority());
+	}
+
 	/**
 	 * @dataProvider getPortTestCases
 	 */
