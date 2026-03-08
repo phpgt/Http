@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http;
 
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 use Gt\Http\Header\RequestHeaders;
@@ -92,6 +93,26 @@ class Request implements RequestInterface {
 		}
 
 		$clone->uri = $uri;
+		return $clone;
+	}
+
+	/** @inheritDoc */
+	public function withBody(StreamInterface|FormData $body):self {
+		if($body instanceof FormData) {
+			$stream = new Stream();
+			$stream->write((string)$body);
+			$stream->rewind();
+
+			$clone = clone $this;
+			$clone->stream = $stream;
+			if(!$clone->headers->contains("Content-Type")) {
+				$clone->headers->set("Content-Type", "application/x-www-form-urlencoded");
+			}
+			return $clone;
+		}
+
+		$clone = clone $this;
+		$clone->stream = $body;
 		return $clone;
 	}
 }
