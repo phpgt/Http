@@ -1,10 +1,12 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Http\FormData;
 use Gt\Http\Header\RequestHeaders;
 use Gt\Http\InvalidRequestMethodHttpException;
 use Gt\Http\Request;
 use Gt\Http\RequestMethod;
+use Gt\Http\Stream;
 use Gt\Http\Uri;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -95,6 +97,26 @@ class RequestTest extends TestCase {
 			$headers
 		);
 		$req->withUri(self::getUriMock("https://example2.com/something"));
+	}
+
+	public function testWithFormDataBodyAutomaticallySetsContentTypeHeader():void {
+		$formData = new FormData();
+		$formData->append("key", "value");
+
+		$body = new Stream();
+		$body->write((string)$formData);
+
+		$request = new Request(
+			"POST",
+			self::getUriMock("/"),
+			new RequestHeaders()
+		);
+
+		$request = $request->withBody($body);
+		self::assertSame(
+			"application/x-www-form-urlencoded",
+			$request->getHeaderLine("Content-Type")
+		);
 	}
 
 	/** @return MockObject|Uri */
