@@ -3,6 +3,7 @@ namespace Gt\Http\Test\Header;
 
 use Gt\Http\Header\HeaderLine;
 use Gt\Http\Header\Headers;
+use Gt\TypeSafeGetter\TypeSafeGetter;
 use PHPUnit\Framework\TestCase;
 
 class HeadersTest extends TestCase {
@@ -97,6 +98,12 @@ class HeadersTest extends TestCase {
 		$headers = new Headers(self::HEADER_ARRAY);
 		self::assertEquals(self::HEADER_ARRAY["Date"], $headers->get("date"));
 		self::assertEquals(self::HEADER_ARRAY["Content-Type"], $headers->get("content-type"));
+	}
+
+	public function testTypeSafeGetterInterface():void {
+		$headers = new Headers(self::HEADER_ARRAY);
+		self::assertInstanceOf(TypeSafeGetter::class, $headers);
+		self::assertSame(self::HEADER_ARRAY["Date"], $headers->getString("date"));
 	}
 
 	public function testGetMultiple() {

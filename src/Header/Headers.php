@@ -2,13 +2,17 @@
 namespace Gt\Http\Header;
 
 use Countable;
+use Gt\TypeSafeGetter\NullableTypeSafeGetter;
+use Gt\TypeSafeGetter\TypeSafeGetter;
 use Iterator;
 
 /**
  * @implements Iterator<int, HeaderLine>
  * @SuppressWarnings("TooManyPublicMethods")
  */
-class Headers implements Iterator, Countable {
+class Headers implements Iterator, Countable, TypeSafeGetter {
+	use NullableTypeSafeGetter;
+
 	const COMMA_HEADERS = [
 // These cookies use commas within the value, so can't be comma separated.
 		"cookie-set",
