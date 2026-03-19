@@ -63,7 +63,7 @@ class Stream implements StreamInterface {
 	public function detach() {
 		/** @var resource|null $stream */
 		$stream = $this->stream;
-		unset($this->stream);
+		$this->stream = null;
 		return $stream;
 	}
 
