@@ -13,7 +13,7 @@
 		"phpgt/promise": "^2.4",
 		"phpgt/async": "^1.0",
 		"phpgt/json": "^2.2",
-		"phpgt/curl": "^3.1",
+		"phpgt/curl": "^3.2",
 		"phpgt/propfunc": "^1.0",
 		"psr/http-message": "^2.0",
 		"willdurand/negotiation": "3.1.0"
