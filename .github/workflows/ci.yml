@@ -93,6 +93,8 @@ jobs:
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   phpstan:
     runs-on: ubuntu-latest
@@ -115,6 +117,7 @@ jobs:
         with:
           php_version: ${{ matrix.php }}
           path: src/
+          level: 7
 
   phpmd:
     runs-on: ubuntu-latest

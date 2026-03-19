@@ -42,6 +42,11 @@ class Uri implements UriInterface {
 			return $authorityStyleParts;
 		}
 
+		$hostLikeParts = $this->parseHostLikeParts($uri, $parts);
+		if(!is_null($hostLikeParts)) {
+			return $hostLikeParts;
+		}
+
 		return $parts;
 	}
 
@@ -77,6 +82,34 @@ class Uri implements UriInterface {
 		return $authorityParts;
 	}
 
+	/**
+	 * @param array<string, int|string> $parts
+	 * @return null|array<string, int|string>
+	 */
+	protected function parseHostLikeParts(
+		string $uri,
+		array $parts
+	):?array {
+		if(!$this->canBeHostLikeUri($uri, $parts)) {
+			return null;
+		}
+
+		$hostLikeParts = parse_url("//" . $uri);
+		if($hostLikeParts === false || !isset($hostLikeParts["host"])) {
+			return null;
+		}
+
+		if(!$this->isAuthorityPathValid($hostLikeParts)) {
+			return null;
+		}
+
+		if(!$this->isAuthorityHostLike($hostLikeParts)) {
+			return null;
+		}
+
+		return $hostLikeParts;
+	}
+
 	/** @param array<string, int|string> $parts */
 	protected function canBeAuthorityStyleUri(string $uri, array $parts):bool {
 		if(str_contains($uri, "://")) {
@@ -89,6 +122,33 @@ class Uri implements UriInterface {
 
 		$path = (string)($parts["path"] ?? "");
 		return str_contains($path, "@");
+	}
+
+	/** @param array<string, int|string> $parts */
+	protected function canBeHostLikeUri(string $uri, array $parts):bool {
+		if(str_contains($uri, "://")) {
+			return false;
+		}
+
+		if(isset($parts["host"])) {
+			return false;
+		}
+
+		if(isset($parts["scheme"])) {
+			return $this->isHostLikeString((string)$parts["scheme"]);
+		}
+
+		if(!isset($parts["path"])) {
+			return false;
+		}
+
+		$path = (string)$parts["path"];
+		if($path === "" || str_starts_with($path, "/")) {
+			return false;
+		}
+
+		$firstSegment = explode("/", $path, 2)[0];
+		return $this->isHostLikeString($firstSegment);
 	}
 
 	/** @param array<string, int|string> $authorityParts */
@@ -104,7 +164,16 @@ class Uri implements UriInterface {
 
 	/** @param array<string, int|string> $authorityParts */
 	protected function isAuthorityHostLike(array $authorityParts):bool {
-		$host = (string)$authorityParts["host"];
+		return $this->isHostLikeString((string)$authorityParts["host"]);
+	}
+
+	protected function isHostLikeString(string $host):bool {
+		if($host === "."
+			|| $host === ".."
+			|| str_starts_with($host, ".")) {
+			return false;
+		}
+
 		if(filter_var($host, FILTER_VALIDATE_IP) !== false) {
 			return true;
 		}

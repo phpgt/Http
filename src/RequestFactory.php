@@ -29,7 +29,6 @@ class RequestFactory {
 
 		$headers = $this->buildRequestHeaders($server);
 
-		/** @var ServerRequestInterface $serverRequest */
 		$serverRequest = $this->buildRequest(
 			$method,
 			$uri,
@@ -58,7 +57,7 @@ class RequestFactory {
 		array $get,
 		array $post,
 		string $inputPath
-	):ServerRequest|Request {
+	):ServerRequestInterface {
 		$request = new ServerRequest(
 			$method,
 			$uri,

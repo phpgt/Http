@@ -53,7 +53,7 @@ class Request implements RequestInterface {
 	}
 
 	/** @inheritDoc */
-	public function withRequestTarget($requestTarget):self {
+	public function withRequestTarget($requestTarget):static {
 		$clone = clone $this;
 		$clone->requestTarget = $requestTarget;
 		return $clone;
@@ -68,7 +68,7 @@ class Request implements RequestInterface {
 	 * @inheritDoc
 	 * @SuppressWarnings("StaticAccess")
 	 */
-	public function withMethod(string $method):self {
+	public function withMethod(string $method):static {
 		$method = RequestMethod::filterMethodName($method);
 		$clone = clone $this;
 		$clone->method = $method;
@@ -81,7 +81,7 @@ class Request implements RequestInterface {
 	}
 
 	/** @inheritDoc */
-	public function withUri(UriInterface $uri, bool$preserveHost = false):self {
+	public function withUri(UriInterface $uri, bool$preserveHost = false):static {
 		$clone = clone $this;
 
 		$host = $uri->getHost();
@@ -97,7 +97,7 @@ class Request implements RequestInterface {
 	}
 
 	/** @inheritDoc */
-	public function withBody(StreamInterface|FormData $body):self {
+	public function withBody(StreamInterface|FormData $body):static {
 		if($body instanceof FormData) {
 			$stream = new Stream();
 			$stream->write((string)$body);
