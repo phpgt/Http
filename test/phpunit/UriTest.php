@@ -638,4 +638,29 @@ class UriTest extends TestCase {
 		self::assertSame("orange", $uri->getQueryValue("colour"));
 		self::assertNull($uri->getQueryValue("age"));
 	}
+
+	public function testConstruct_noPathJustHost():void {
+		$uri = new Uri("10.0.0.1");
+		self::assertSame("10.0.0.1", $uri->getHost());
+	}
+
+	public function testConstruct_pathAndHost():void {
+		$uri = new Uri("10.0.0.1/tagbatch");
+		self::assertSame("10.0.0.1", $uri->getHost());
+		self::assertSame("/tagbatch", $uri->getPath());
+	}
+
+	public function testConstruct_pathWithQueryAndHost():void {
+		$uri = new Uri("10.0.0.1/tagbatch?id=123");
+		self::assertSame("10.0.0.1", $uri->getHost());
+		self::assertSame("/tagbatch", $uri->getPath());
+		self::assertSame("id=123", $uri->getQuery());
+		self::assertSame("123", $uri->getQueryValue("id"));
+	}
+
+	public function testConstruct_pathWithQueryAndHostAndPort():void {
+		$uri = new Uri("10.0.0.1:4321/tagbatch?id=123");
+		self::assertSame("10.0.0.1", $uri->getHost());
+		self::assertSame(4321, $uri->getPort());
+	}
 }
