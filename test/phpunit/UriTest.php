@@ -182,6 +182,41 @@ class UriTest extends TestCase {
 		$this->assertSame('admin:admin@10.10.0.8', $uri->getAuthority());
 	}
 
+	public function testParsesAuthorityStyleUserWithoutPasswordAndWithoutScheme() {
+		$uri = new Uri('admin@10.10.0.8/status.xml');
+		$this->assertSame('', $uri->getScheme());
+		$this->assertSame('admin', $uri->getUserInfo());
+		$this->assertSame('10.10.0.8', $uri->getHost());
+		$this->assertSame('/status.xml', $uri->getPath());
+	}
+
+	public function testParsesLocalhostWithoutSchemeAsHost() {
+		$uri = new Uri('localhost/status');
+		$this->assertSame('localhost', $uri->getHost());
+		$this->assertSame('/status', $uri->getPath());
+	}
+
+	public function testKeepsSingleLabelPathWithoutSchemeAsRelativePath() {
+		$uri = new Uri('printer/status');
+		$this->assertSame('', $uri->getHost());
+		$this->assertSame('printer/status', $uri->getPath());
+	}
+
+	public function testParsesIpv6HostAndPortWithoutScheme() {
+		$uri = new Uri('[2001:db8::1]:8080/a');
+		$this->assertSame('[2001:db8::1]', $uri->getHost());
+		$this->assertSame(8080, $uri->getPort());
+		$this->assertSame('/a', $uri->getPath());
+	}
+
+	public function testParsesHostPortAndQueryWithoutScheme() {
+		$uri = new Uri('10.0.0.1:4321?x=1');
+		$this->assertSame('10.0.0.1', $uri->getHost());
+		$this->assertSame(4321, $uri->getPort());
+		$this->assertSame('', $uri->getPath());
+		$this->assertSame('x=1', $uri->getQuery());
+	}
+
 	public function testKeepsOriginalParseWhenAuthorityFallbackCannotParseDoubleSlash() {
 		$uri = new Uri('admin:admin@?/x');
 		$this->assertSame('admin', $uri->getScheme());

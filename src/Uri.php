@@ -130,11 +130,15 @@ class Uri implements UriInterface {
 			return false;
 		}
 
-		if(isset($parts["host"]) || !isset($parts["path"])) {
+		if(isset($parts["host"])) {
 			return false;
 		}
 
 		if(isset($parts["scheme"])) {
+			return $this->isHostLikeString((string)$parts["scheme"]);
+		}
+
+		if(!isset($parts["path"])) {
 			return false;
 		}
 
