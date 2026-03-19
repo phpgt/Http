@@ -41,13 +41,15 @@ class Parser {
 	protected function pregMatchProtocol(string $matchName):string {
 		$headerLine = strtok($this->rawHeaders, "\n") ?: "";
 		/** @noinspection RegExpRedundantEscape */
-		preg_match(
+		$matched = preg_match(
 			"/HTTP\/(?P<version>[0-9\.]+)\s*(?P<code>\d+)?/",
 			$headerLine,
 			$matches
 		);
-		/** @var array<int|string, string> $matches */
+		if($matched !== 1) {
+			return "";
+		}
 
-		return $matches[$matchName];
+		return (string)($matches[$matchName] ?? "");
 	}
 }
