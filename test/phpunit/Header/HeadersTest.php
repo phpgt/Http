@@ -62,12 +62,12 @@ class HeadersTest extends TestCase {
 	public function testAddMultipleCommaHeader() {
 		$headers = new Headers(self::HEADER_ARRAY);
 		$headers->add(
-			"Cookie-set",
+			"Set-Cookie",
 			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com",
 			"id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly"
 		);
 		$headerArray = $headers->asArray();
-		$cookie = explode("\n", $headerArray["Cookie-set"]);
+		$cookie = explode("\n", $headerArray["Set-Cookie"]);
 		self::assertContains("language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com", $cookie);
 		self::assertContains("id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly", $cookie);
 	}
@@ -115,7 +115,7 @@ class HeadersTest extends TestCase {
 	public function testGetMultipleCommas() {
 		$headers = new Headers(self::HEADER_ARRAY);
 		$headers->add(
-			"Cookie-set",
+			"Set-Cookie",
 			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com",
 			"id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly"
 		);
@@ -123,7 +123,58 @@ class HeadersTest extends TestCase {
 			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com"
 			. "\n"
 			. "id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly",
-			$headers->get("Cookie-set")
+			$headers->get("Set-Cookie")
+		);
+	}
+
+	public function testAddMultipleSetCookieWithoutCommaPreservesSeparateLines():void {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("Set-Cookie", "language=en; Path=/");
+		$headers->add("Set-Cookie", "id=123; HttpOnly");
+
+		self::assertCount(5, $headers);
+		self::assertSame(
+			"language=en; Path=/\nid=123; HttpOnly",
+			$headers->asArray()["Set-Cookie"]
+		);
+	}
+
+	public function testGetAllAggregatesValuesAcrossSeparateHeaderLines():void {
+		$firstValue = "Digest realm=\"example.com\", qop=\"auth\"";
+		$secondValue = "Digest realm=\"api.example.com\", qop=\"auth-int\"";
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("WWW-Authenticate", $firstValue);
+		$headers->add("WWW-Authenticate", $secondValue);
+
+		self::assertSame(
+			[$firstValue, $secondValue],
+			$headers->getAll("WWW-Authenticate")
+		);
+	}
+
+	public function testAsArrayPreservesAllDuplicateSpecialCaseHeaderLines():void {
+		$firstValue = "Digest realm=\"example.com\", qop=\"auth\"";
+		$secondValue = "Digest realm=\"api.example.com\", qop=\"auth-int\"";
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("WWW-Authenticate", $firstValue);
+		$headers->add("WWW-Authenticate", $secondValue);
+
+		self::assertSame(
+			$firstValue . "\n" . $secondValue,
+			$headers->asArray()["WWW-Authenticate"]
+		);
+	}
+
+	public function testAsArrayNestedPreservesAllDuplicateHeaderLineValues():void {
+		$firstValue = "Digest realm=\"example.com\", qop=\"auth\"";
+		$secondValue = "Digest realm=\"api.example.com\", qop=\"auth-int\"";
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("WWW-Authenticate", $firstValue);
+		$headers->add("WWW-Authenticate", $secondValue);
+
+		self::assertSame(
+			[$firstValue, $secondValue],
+			$headers->asArray(true)["WWW-Authenticate"]
 		);
 	}
 

@@ -115,6 +115,26 @@ class RequestTest extends TestCase {
 		);
 	}
 
+	public function testGetHeaderReturnsAllValuesAcrossSeparateHeaderLines():void {
+		$headers = new RequestHeaders();
+		$headers->add("WWW-Authenticate", "Digest realm=\"example.com\", qop=\"auth\"");
+		$headers->add("WWW-Authenticate", "Digest realm=\"api.example.com\", qop=\"auth-int\"");
+
+		$request = new Request(
+			"GET",
+			self::getUriMock("/"),
+			$headers
+		);
+
+		self::assertSame(
+			[
+				"Digest realm=\"example.com\", qop=\"auth\"",
+				"Digest realm=\"api.example.com\", qop=\"auth-int\"",
+			],
+			$request->getHeader("WWW-Authenticate")
+		);
+	}
+
 	/** @return MockObject|Uri */
 	protected function getUriMock(string $uriPath = ""):MockObject {
 		$partPath = parse_url($uriPath, PHP_URL_PATH);
