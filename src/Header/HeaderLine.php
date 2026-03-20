@@ -17,7 +17,7 @@ class HeaderLine {
 	}
 
 	public function __toString():string {
-		if(in_array($this->name, Headers::COMMA_HEADERS)) {
+		if(in_array($this->name, Headers::NON_COMBINABLE_HEADERS)) {
 			return $this->getValuesNewlineSeparated();
 		}
 		else {

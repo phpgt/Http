@@ -117,8 +117,8 @@ class RequestTest extends TestCase {
 
 	public function testGetHeaderReturnsAllValuesAcrossSeparateHeaderLines():void {
 		$headers = new RequestHeaders();
-		$headers->add("WWW-Authenticate", "Digest realm=\"example.com\", qop=\"auth\"");
-		$headers->add("WWW-Authenticate", "Digest realm=\"api.example.com\", qop=\"auth-int\"");
+		$headers->add("Set-Cookie", "language=en; Path=/");
+		$headers->add("Set-Cookie", "id=123; HttpOnly");
 
 		$request = new Request(
 			"GET",
@@ -128,10 +128,10 @@ class RequestTest extends TestCase {
 
 		self::assertSame(
 			[
-				"Digest realm=\"example.com\", qop=\"auth\"",
-				"Digest realm=\"api.example.com\", qop=\"auth-int\"",
+				"language=en; Path=/",
+				"id=123; HttpOnly",
 			],
-			$request->getHeader("WWW-Authenticate")
+			$request->getHeader("Set-Cookie")
 		);
 	}
 

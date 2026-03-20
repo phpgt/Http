@@ -139,42 +139,42 @@ class HeadersTest extends TestCase {
 		);
 	}
 
-	public function testGetAllAggregatesValuesAcrossSeparateHeaderLines():void {
-		$firstValue = "Digest realm=\"example.com\", qop=\"auth\"";
-		$secondValue = "Digest realm=\"api.example.com\", qop=\"auth-int\"";
+	public function testGetAllAggregatesValuesAcrossSeparateSetCookieHeaderLines():void {
+		$firstValue = "language=en; Path=/";
+		$secondValue = "id=123; HttpOnly";
 		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->add("WWW-Authenticate", $firstValue);
-		$headers->add("WWW-Authenticate", $secondValue);
+		$headers->add("Set-Cookie", $firstValue);
+		$headers->add("Set-Cookie", $secondValue);
 
 		self::assertSame(
 			[$firstValue, $secondValue],
-			$headers->getAll("WWW-Authenticate")
+			$headers->getAll("Set-Cookie")
 		);
 	}
 
-	public function testAsArrayPreservesAllDuplicateSpecialCaseHeaderLines():void {
-		$firstValue = "Digest realm=\"example.com\", qop=\"auth\"";
-		$secondValue = "Digest realm=\"api.example.com\", qop=\"auth-int\"";
+	public function testAsArrayPreservesAllDuplicateSetCookieHeaderLines():void {
+		$firstValue = "language=en; Path=/";
+		$secondValue = "id=123; HttpOnly";
 		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->add("WWW-Authenticate", $firstValue);
-		$headers->add("WWW-Authenticate", $secondValue);
+		$headers->add("Set-Cookie", $firstValue);
+		$headers->add("Set-Cookie", $secondValue);
 
 		self::assertSame(
 			$firstValue . "\n" . $secondValue,
-			$headers->asArray()["WWW-Authenticate"]
+			$headers->asArray()["Set-Cookie"]
 		);
 	}
 
-	public function testAsArrayNestedPreservesAllDuplicateHeaderLineValues():void {
-		$firstValue = "Digest realm=\"example.com\", qop=\"auth\"";
-		$secondValue = "Digest realm=\"api.example.com\", qop=\"auth-int\"";
+	public function testAsArrayNestedPreservesAllDuplicateSetCookieHeaderLineValues():void {
+		$firstValue = "language=en; Path=/";
+		$secondValue = "id=123; HttpOnly";
 		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->add("WWW-Authenticate", $firstValue);
-		$headers->add("WWW-Authenticate", $secondValue);
+		$headers->add("Set-Cookie", $firstValue);
+		$headers->add("Set-Cookie", $secondValue);
 
 		self::assertSame(
 			[$firstValue, $secondValue],
-			$headers->asArray(true)["WWW-Authenticate"]
+			$headers->asArray(true)["Set-Cookie"]
 		);
 	}
 
