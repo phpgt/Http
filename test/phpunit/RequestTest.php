@@ -115,6 +115,26 @@ class RequestTest extends TestCase {
 		);
 	}
 
+	public function testGetHeaderReturnsAllValuesAcrossSeparateHeaderLines():void {
+		$headers = new RequestHeaders();
+		$headers->add("Set-Cookie", "language=en; Path=/");
+		$headers->add("Set-Cookie", "id=123; HttpOnly");
+
+		$request = new Request(
+			"GET",
+			self::getUriMock("/"),
+			$headers
+		);
+
+		self::assertSame(
+			[
+				"language=en; Path=/",
+				"id=123; HttpOnly",
+			],
+			$request->getHeader("Set-Cookie")
+		);
+	}
+
 	/** @return MockObject|Uri */
 	protected function getUriMock(string $uriPath = ""):MockObject {
 		$partPath = parse_url($uriPath, PHP_URL_PATH);

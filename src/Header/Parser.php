@@ -31,8 +31,20 @@ class Parser {
 			$kvp = explode(":", $h, 2);
 			$key = $kvp[0];
 			$value = $kvp[1] ?? "";
+			$value = trim($value);
 
-			$keyValues[$key] = trim($value);
+			if(array_key_exists($key, $keyValues)) {
+				if(strtolower($key) === "set-cookie") {
+					$keyValues[$key] .= "\n" . $value;
+				}
+				else {
+					$keyValues[$key] .= ", " . $value;
+				}
+
+				continue;
+			}
+
+			$keyValues[$key] = $value;
 		}
 
 		return $keyValues;
@@ -50,6 +62,6 @@ class Parser {
 			return "";
 		}
 
-		return (string)($matches[$matchName] ?? "");
+		return $matches[$matchName] ?? "";
 	}
 }
