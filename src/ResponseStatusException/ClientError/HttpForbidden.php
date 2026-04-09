@@ -1,7 +1,8 @@
 <?php
-namespace Gt\Http\ResponseStatusException;
+namespace Gt\Http\ResponseStatusException\ClientError;
 
 use Gt\Http\StatusCode;
+use Gt\Http\ResponseStatusException\ResponseStatusException;
 
 /**
  * The request contained valid data and was understood by the server, but the
