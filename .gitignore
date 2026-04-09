@@ -3,3 +3,4 @@
 /test/phpunit/_coverage
 /*.phar
 .phpunit.*.cache
+/test/phpunit/.phpunit.cache/

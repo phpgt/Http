@@ -2,18 +2,19 @@
 namespace Gt\Http\Header;
 
 use Countable;
+use Gt\TypeSafeGetter\NullableTypeSafeGetter;
+use Gt\TypeSafeGetter\TypeSafeGetter;
 use Iterator;
 
 /**
  * @implements Iterator<int, HeaderLine>
  * @SuppressWarnings("TooManyPublicMethods")
  */
-class Headers implements Iterator, Countable {
-	const COMMA_HEADERS = [
-// These cookies use commas within the value, so can't be comma separated.
-		"cookie-set",
-		"www-authenticate",
-		"proxy-authenticate"
+class Headers implements Iterator, Countable, TypeSafeGetter {
+	use NullableTypeSafeGetter;
+
+	const NON_COMBINABLE_HEADERS = [
+		"set-cookie",
 	];
 
 	/** @var HeaderLine[] */
@@ -39,17 +40,29 @@ class Headers implements Iterator, Countable {
 
 		foreach($this->headerLines as $header) {
 			$name = $header->getName();
+			$nameLower = strtolower($name);
 
 			if($nested) {
-				$array[$name] = $header->getValues();
+				$array[$name] ??= [];
+				$array[$name] = array_merge($array[$name], $header->getValues());
 				continue;
 			}
 
-			if(in_array(strtolower($name), self::COMMA_HEADERS)) {
-				$array[$name] = $header->getValuesNewlineSeparated();
+			if(!array_key_exists($name, $array)) {
+				$array[$name] = "";
+			}
+
+			if(in_array($nameLower, self::NON_COMBINABLE_HEADERS)) {
+				if($array[$name] !== "") {
+					$array[$name] .= "\n";
+				}
+				$array[$name] .= $header->getValuesNewlineSeparated();
 			}
 			else {
-				$array[$name] = $header->getValuesCommaSeparated();
+				if($array[$name] !== "") {
+					$array[$name] .= ",";
+				}
+				$array[$name] .= $header->getValuesCommaSeparated();
 			}
 		}
 
@@ -63,7 +76,14 @@ class Headers implements Iterator, Countable {
 				$value = [$value];
 			}
 
-			$this->headerLines []= new HeaderLine($key, ...$value);
+			if(in_array(strtolower($key), self::NON_COMBINABLE_HEADERS)) {
+				foreach($value as $singleValue) {
+					array_push($this->headerLines, new HeaderLine($key, $singleValue));
+				}
+			}
+			else {
+				array_push($this->headerLines, new HeaderLine($key, ...$value));
+			}
 		}
 	}
 
@@ -78,10 +98,11 @@ class Headers implements Iterator, Countable {
 	}
 
 	public function add(string $name, string...$values):void {
-		$isCommaHeader = false;
-		if(strstr($values[0], ",")
-		&& in_array(strtolower($name), self::COMMA_HEADERS)) {
-			$isCommaHeader = true;
+		if(in_array(strtolower($name), self::NON_COMBINABLE_HEADERS)) {
+			foreach($values as $value) {
+				array_push($this->headerLines, new HeaderLine($name, $value));
+			}
+			return;
 		}
 
 		$headerLineToAdd = null;
@@ -93,7 +114,7 @@ class Headers implements Iterator, Countable {
 			$headerLineToAdd = $headerLine;
 		}
 
-		if(is_null($headerLineToAdd) || $isCommaHeader) {
+		if(is_null($headerLineToAdd)) {
 			array_push(
 				$this->headerLines,
 				new HeaderLine($name, ...$values)
@@ -119,24 +140,34 @@ class Headers implements Iterator, Countable {
 	}
 
 	public function get(string $name):?HeaderLine {
+		$matchingValues = [];
+		$headerName = null;
+
 		foreach($this->headerLines as $line) {
 			if($line->isNamed($name)) {
-				return $line;
+				$headerName ??= $line->getName();
+				$matchingValues = array_merge($matchingValues, $line->getValues());
 			}
 		}
 
-		return null;
+		if(!$headerName) {
+			return null;
+		}
+
+		return new HeaderLine($headerName, ...$matchingValues);
 	}
 
-	/** @return null|array<int, string> */
-	public function getAll(string $name):?array {
+	/** @return array<int, string> */
+	public function getAll(string $name):array {
+		$allValues = [];
+
 		foreach($this->headerLines as $line) {
 			if($line->isNamed($name)) {
-				return $line->getValues();
+				$allValues = array_merge($allValues, $line->getValues());
 			}
 		}
 
-		return null;
+		return $allValues;
 	}
 
 	public function getFirst():string {

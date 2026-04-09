@@ -169,6 +169,92 @@ class UriTest extends TestCase {
 		$this->assertSame('0://0:0@0/0?0#0', (string)$uri);
 	}
 
+	public function testParsesAuthorityStyleCredentialsWithoutScheme() {
+		$uri = new Uri('admin:admin@10.10.0.8/status.xml');
+		$this->assertSame('', $uri->getScheme());
+		$this->assertSame('admin:admin', $uri->getUserInfo());
+		$this->assertSame('10.10.0.8', $uri->getHost());
+		$this->assertSame('/status.xml', $uri->getPath());
+	}
+
+	public function testBuildsAuthorityFromCredentialsWithoutScheme() {
+		$uri = new Uri('admin:admin@10.10.0.8/status.xml');
+		$this->assertSame('admin:admin@10.10.0.8', $uri->getAuthority());
+	}
+
+	public function testParsesAuthorityStyleUserWithoutPasswordAndWithoutScheme() {
+		$uri = new Uri('admin@10.10.0.8/status.xml');
+		$this->assertSame('', $uri->getScheme());
+		$this->assertSame('admin', $uri->getUserInfo());
+		$this->assertSame('10.10.0.8', $uri->getHost());
+		$this->assertSame('/status.xml', $uri->getPath());
+	}
+
+	public function testParsesLocalhostWithoutSchemeAsHost() {
+		$uri = new Uri('localhost/status');
+		$this->assertSame('localhost', $uri->getHost());
+		$this->assertSame('/status', $uri->getPath());
+	}
+
+	public function testKeepsSingleLabelPathWithoutSchemeAsRelativePath() {
+		$uri = new Uri('printer/status');
+		$this->assertSame('', $uri->getHost());
+		$this->assertSame('printer/status', $uri->getPath());
+	}
+
+	public function testParsesIpv6HostAndPortWithoutScheme() {
+		$uri = new Uri('[2001:db8::1]:8080/a');
+		$this->assertSame('[2001:db8::1]', $uri->getHost());
+		$this->assertSame(8080, $uri->getPort());
+		$this->assertSame('/a', $uri->getPath());
+	}
+
+	public function testParsesHostPortAndQueryWithoutScheme() {
+		$uri = new Uri('10.0.0.1:4321?x=1');
+		$this->assertSame('10.0.0.1', $uri->getHost());
+		$this->assertSame(4321, $uri->getPort());
+		$this->assertSame('', $uri->getPath());
+		$this->assertSame('x=1', $uri->getQuery());
+	}
+
+	public function testKeepsOriginalParseWhenAuthorityFallbackCannotParseDoubleSlash() {
+		$uri = new Uri('admin:admin@?/x');
+		$this->assertSame('admin', $uri->getScheme());
+		$this->assertSame('admin@', $uri->getPath());
+		$this->assertSame('/x', $uri->getQuery());
+	}
+
+	public function testKeepsOriginalParseWhenAuthorityHostIsNotHostLike() {
+		$uri = new Uri('admin:admin@example/status.xml');
+		$this->assertSame('admin', $uri->getScheme());
+		$this->assertSame('', $uri->getAuthority());
+		$this->assertSame('admin@example/status.xml', $uri->getPath());
+	}
+
+	public function testCanRejectAuthorityFallbackWhenRequiredAuthorityPartsAreMissing() {
+		$uri = new class('admin:admin@10.10.0.8/status.xml') extends Uri {
+			protected function hasRequiredAuthorityParts(array $authorityParts):bool {
+				return false;
+			}
+		};
+
+		$this->assertSame('admin', $uri->getScheme());
+		$this->assertSame('', $uri->getAuthority());
+		$this->assertSame('admin@10.10.0.8/status.xml', $uri->getPath());
+	}
+
+	public function testCanRejectAuthorityFallbackWhenAuthorityPathIsInvalid() {
+		$uri = new class('admin:admin@10.10.0.8/status.xml') extends Uri {
+			protected function isAuthorityPathValid(array $authorityParts):bool {
+				return false;
+			}
+		};
+
+		$this->assertSame('admin', $uri->getScheme());
+		$this->assertSame('', $uri->getAuthority());
+		$this->assertSame('admin@10.10.0.8/status.xml', $uri->getPath());
+	}
+
 	/**
 	 * @dataProvider getPortTestCases
 	 */
@@ -586,5 +672,30 @@ class UriTest extends TestCase {
 		self::assertSame("cody", $uri->getQueryValue("name"));
 		self::assertSame("orange", $uri->getQueryValue("colour"));
 		self::assertNull($uri->getQueryValue("age"));
+	}
+
+	public function testConstruct_noPathJustHost():void {
+		$uri = new Uri("10.0.0.1");
+		self::assertSame("10.0.0.1", $uri->getHost());
+	}
+
+	public function testConstruct_pathAndHost():void {
+		$uri = new Uri("10.0.0.1/tagbatch");
+		self::assertSame("10.0.0.1", $uri->getHost());
+		self::assertSame("/tagbatch", $uri->getPath());
+	}
+
+	public function testConstruct_pathWithQueryAndHost():void {
+		$uri = new Uri("10.0.0.1/tagbatch?id=123");
+		self::assertSame("10.0.0.1", $uri->getHost());
+		self::assertSame("/tagbatch", $uri->getPath());
+		self::assertSame("id=123", $uri->getQuery());
+		self::assertSame("123", $uri->getQueryValue("id"));
+	}
+
+	public function testConstruct_pathWithQueryAndHostAndPort():void {
+		$uri = new Uri("10.0.0.1:4321/tagbatch?id=123");
+		self::assertSame("10.0.0.1", $uri->getHost());
+		self::assertSame(4321, $uri->getPort());
 	}
 }

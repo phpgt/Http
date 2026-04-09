@@ -1,7 +1,7 @@
 <?php /** @noinspection PhpUnusedPrivateMethodInspection */
 namespace Gt\Http;
 
-use Gt\Curl\CurlInterface;
+use GT\Curl\CurlInterface;
 use Gt\Http\Header\ResponseHeaders;
 use Gt\Json\JsonObject;
 use Gt\Json\JsonObjectBuilder;
@@ -178,7 +178,7 @@ class Response implements ResponseInterface {
 
 	/** @inheritDoc */
 	public function getReasonPhrase():string {
-		return StatusCode::REASON_PHRASE[$this->statusCode];
+		return StatusCode::REASON_PHRASE[$this->statusCode ?? 0] ?? "";
 	}
 
 	public function getResponseHeaders():ResponseHeaders {

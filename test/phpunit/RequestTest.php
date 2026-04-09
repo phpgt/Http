@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Http\FormData;
 use Gt\Http\Header\RequestHeaders;
 use Gt\Http\InvalidRequestMethodHttpException;
 use Gt\Http\Request;
@@ -95,6 +96,43 @@ class RequestTest extends TestCase {
 			$headers
 		);
 		$req->withUri(self::getUriMock("https://example2.com/something"));
+	}
+
+	public function testWithFormDataBodyAutomaticallySetsContentTypeHeader():void {
+		$formData = new FormData();
+		$formData->append("key", "value");
+
+		$request = new Request(
+			"POST",
+			self::getUriMock("/"),
+			new RequestHeaders()
+		);
+
+		$request = $request->withBody($formData);
+		self::assertSame(
+			"application/x-www-form-urlencoded",
+			$request->getHeaderLine("Content-Type")
+		);
+	}
+
+	public function testGetHeaderReturnsAllValuesAcrossSeparateHeaderLines():void {
+		$headers = new RequestHeaders();
+		$headers->add("Set-Cookie", "language=en; Path=/");
+		$headers->add("Set-Cookie", "id=123; HttpOnly");
+
+		$request = new Request(
+			"GET",
+			self::getUriMock("/"),
+			$headers
+		);
+
+		self::assertSame(
+			[
+				"language=en; Path=/",
+				"id=123; HttpOnly",
+			],
+			$request->getHeader("Set-Cookie")
+		);
 	}
 
 	/** @return MockObject|Uri */

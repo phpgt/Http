@@ -3,6 +3,7 @@ namespace Gt\Http\Test\Header;
 
 use Gt\Http\Header\HeaderLine;
 use Gt\Http\Header\Headers;
+use Gt\TypeSafeGetter\TypeSafeGetter;
 use PHPUnit\Framework\TestCase;
 
 class HeadersTest extends TestCase {
@@ -61,12 +62,12 @@ class HeadersTest extends TestCase {
 	public function testAddMultipleCommaHeader() {
 		$headers = new Headers(self::HEADER_ARRAY);
 		$headers->add(
-			"Cookie-set",
+			"Set-Cookie",
 			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com",
 			"id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly"
 		);
 		$headerArray = $headers->asArray();
-		$cookie = explode("\n", $headerArray["Cookie-set"]);
+		$cookie = explode("\n", $headerArray["Set-Cookie"]);
 		self::assertContains("language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com", $cookie);
 		self::assertContains("id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly", $cookie);
 	}
@@ -99,6 +100,12 @@ class HeadersTest extends TestCase {
 		self::assertEquals(self::HEADER_ARRAY["Content-Type"], $headers->get("content-type"));
 	}
 
+	public function testTypeSafeGetterInterface():void {
+		$headers = new Headers(self::HEADER_ARRAY);
+		self::assertInstanceOf(TypeSafeGetter::class, $headers);
+		self::assertSame(self::HEADER_ARRAY["Date"], $headers->getString("date"));
+	}
+
 	public function testGetMultiple() {
 		$headers = new Headers(self::HEADER_ARRAY);
 		$headers->add("Accept", "application/json", "application/xml");
@@ -108,7 +115,7 @@ class HeadersTest extends TestCase {
 	public function testGetMultipleCommas() {
 		$headers = new Headers(self::HEADER_ARRAY);
 		$headers->add(
-			"Cookie-set",
+			"Set-Cookie",
 			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com",
 			"id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly"
 		);
@@ -116,7 +123,58 @@ class HeadersTest extends TestCase {
 			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com"
 			. "\n"
 			. "id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly",
-			$headers->get("Cookie-set")
+			$headers->get("Set-Cookie")
+		);
+	}
+
+	public function testAddMultipleSetCookieWithoutCommaPreservesSeparateLines():void {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("Set-Cookie", "language=en; Path=/");
+		$headers->add("Set-Cookie", "id=123; HttpOnly");
+
+		self::assertCount(5, $headers);
+		self::assertSame(
+			"language=en; Path=/\nid=123; HttpOnly",
+			$headers->asArray()["Set-Cookie"]
+		);
+	}
+
+	public function testGetAllAggregatesValuesAcrossSeparateSetCookieHeaderLines():void {
+		$firstValue = "language=en; Path=/";
+		$secondValue = "id=123; HttpOnly";
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("Set-Cookie", $firstValue);
+		$headers->add("Set-Cookie", $secondValue);
+
+		self::assertSame(
+			[$firstValue, $secondValue],
+			$headers->getAll("Set-Cookie")
+		);
+	}
+
+	public function testAsArrayPreservesAllDuplicateSetCookieHeaderLines():void {
+		$firstValue = "language=en; Path=/";
+		$secondValue = "id=123; HttpOnly";
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("Set-Cookie", $firstValue);
+		$headers->add("Set-Cookie", $secondValue);
+
+		self::assertSame(
+			$firstValue . "\n" . $secondValue,
+			$headers->asArray()["Set-Cookie"]
+		);
+	}
+
+	public function testAsArrayNestedPreservesAllDuplicateSetCookieHeaderLineValues():void {
+		$firstValue = "language=en; Path=/";
+		$secondValue = "id=123; HttpOnly";
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("Set-Cookie", $firstValue);
+		$headers->add("Set-Cookie", $secondValue);
+
+		self::assertSame(
+			[$firstValue, $secondValue],
+			$headers->asArray(true)["Set-Cookie"]
 		);
 	}
 

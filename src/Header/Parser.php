@@ -31,8 +31,20 @@ class Parser {
 			$kvp = explode(":", $h, 2);
 			$key = $kvp[0];
 			$value = $kvp[1] ?? "";
+			$value = trim($value);
 
-			$keyValues[$key] = trim($value);
+			if(array_key_exists($key, $keyValues)) {
+				if(strtolower($key) === "set-cookie") {
+					$keyValues[$key] .= "\n" . $value;
+				}
+				else {
+					$keyValues[$key] .= ", " . $value;
+				}
+
+				continue;
+			}
+
+			$keyValues[$key] = $value;
 		}
 
 		return $keyValues;
@@ -41,13 +53,15 @@ class Parser {
 	protected function pregMatchProtocol(string $matchName):string {
 		$headerLine = strtok($this->rawHeaders, "\n") ?: "";
 		/** @noinspection RegExpRedundantEscape */
-		preg_match(
+		$matched = preg_match(
 			"/HTTP\/(?P<version>[0-9\.]+)\s*(?P<code>\d+)?/",
 			$headerLine,
 			$matches
 		);
-		/** @var array<int|string, string> $matches */
+		if($matched !== 1) {
+			return "";
+		}
 
-		return $matches[$matchName];
+		return $matches[$matchName] ?? "";
 	}
 }

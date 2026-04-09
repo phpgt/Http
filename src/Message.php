@@ -2,6 +2,7 @@
 namespace Gt\Http;
 
 use Gt\Http\Header\Headers;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
 trait Message {
@@ -22,7 +23,7 @@ trait Message {
 	}
 
 	/** @inheritDoc */
-	public function withProtocolVersion(string $version):self {
+	public function withProtocolVersion(string $version):MessageInterface {
 		if(!is_numeric($version)) {
 			throw new InvalidProtocolHttpException($version);
 		}
@@ -105,7 +106,7 @@ trait Message {
 	 *
 	 * @param string|string[] $value Header value(s).
 	 */
-	public function withHeader(string $name, $value):self {
+	public function withHeader(string $name, $value):MessageInterface {
 		if(!is_array($value)) {
 			$value = [$value];
 		}
@@ -120,7 +121,7 @@ trait Message {
 	 *
 	 * @param string|string[] $value Header value(s).
 	 */
-	public function withAddedHeader(string $name, $value):self {
+	public function withAddedHeader(string $name, $value):MessageInterface {
 		if(!is_array($value)) {
 			$value = [$value];
 		}
@@ -131,14 +132,14 @@ trait Message {
 	}
 
 	/** @inheritDoc */
-	public function withoutHeader(string $name):self {
+	public function withoutHeader(string $name):MessageInterface {
 		$clone = clone $this;
 		$clone->headers->remove($name);
 		return $clone;
 	}
 
 	/** @param array<string, string|array<int, string>> $headers */
-	public function setHeaders(array $headers):self {
+	public function setHeaders(array $headers):MessageInterface {
 		$clone = clone $this;
 		$clone->headers->fromArray($headers);
 		return $clone;
@@ -153,7 +154,7 @@ trait Message {
 	}
 
 	/** @inheritDoc */
-	public function withBody(StreamInterface $body):self {
+	public function withBody(StreamInterface $body):MessageInterface {
 		$clone = clone $this;
 		$clone->stream = $body;
 		return $clone;

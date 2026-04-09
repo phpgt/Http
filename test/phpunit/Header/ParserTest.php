@@ -73,4 +73,18 @@ HEADERS;
 		self::assertArrayHasKey("X-Test-For", $keyValues);
 		self::assertEquals("PHP.Gt", $keyValues["X-Test-For"]);
 	}
+
+	public function testGetKeyValuesCombinesRepeatedListValuedHeaders():void {
+		$headers = <<<HEADERS
+HTTP/1.1 200 OK
+Accept: text/html
+Accept: application/json
+HEADERS;
+		$parser = new Parser($headers);
+
+		self::assertSame(
+			"text/html, application/json",
+			$parser->getKeyValues()["Accept"]
+		);
+	}
 }
