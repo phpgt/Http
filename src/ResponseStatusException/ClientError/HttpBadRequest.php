@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException;
+namespace GT\Http\ResponseStatusException;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * The server cannot or will not process the request due to an apparent client

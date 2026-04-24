@@ -1,5 +1,5 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
 class DefaultPort {
 	const HTTP = 80;

@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException;
+namespace GT\Http\ResponseStatusException;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * The request contained valid data and was understood by the server, but the

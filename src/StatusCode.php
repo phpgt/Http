@@ -1,5 +1,5 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
 // TODO: Convert this to two enum classes
 class StatusCode {

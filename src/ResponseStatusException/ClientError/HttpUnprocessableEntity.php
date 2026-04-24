@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ClientError;
+namespace GT\Http\ResponseStatusException\ClientError;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * The request was well-formed but was unable to be followed due to semantic

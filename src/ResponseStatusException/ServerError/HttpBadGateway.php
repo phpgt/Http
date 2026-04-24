@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException;
+namespace GT\Http\ResponseStatusException;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * The server was acting as a gateway or proxy and received an invalid response

@@ -1,10 +1,10 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use Gt\Http\Header\RequestHeaders;
+use GT\Http\Header\RequestHeaders;
 
 class Request implements RequestInterface {
 	use Message;

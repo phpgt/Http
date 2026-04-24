@@ -1,12 +1,12 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
-use Gt\Http\FormData;
-use Gt\Http\Header\RequestHeaders;
-use Gt\Http\InvalidRequestMethodHttpException;
-use Gt\Http\Request;
-use Gt\Http\RequestMethod;
-use Gt\Http\Uri;
+use GT\Http\FormData;
+use GT\Http\Header\RequestHeaders;
+use GT\Http\InvalidRequestMethodHttpException;
+use GT\Http\Request;
+use GT\Http\RequestMethod;
+use GT\Http\Uri;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

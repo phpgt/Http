@@ -1,8 +1,8 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
-use Gt\Http\Header\RequestHeaders;
-use Gt\Input\InputData\Datum\FileUpload;
+use GT\Http\Header\RequestHeaders;
+use GT\Input\InputData\Datum\FileUpload;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;

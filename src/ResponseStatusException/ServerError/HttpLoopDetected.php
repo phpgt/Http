@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ServerError;
+namespace GT\Http\ResponseStatusException\ServerError;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * The server detected an infinite loop while processing the request (sent

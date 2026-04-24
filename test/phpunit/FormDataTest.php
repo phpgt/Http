@@ -1,12 +1,12 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
 use DOMDocument;
 use DOMElement;
-use Gt\Http\Blob;
-use Gt\Http\File;
-use Gt\Http\FormData;
-use Gt\Http\HttpException;
+use GT\Http\Blob;
+use GT\Http\File;
+use GT\Http\FormData;
+use GT\Http\HttpException;
 use PHPUnit\Framework\TestCase;
 
 class FormDataTest extends TestCase {

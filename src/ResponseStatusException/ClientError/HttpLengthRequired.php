@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException;
+namespace GT\Http\ResponseStatusException;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 class HttpLengthRequired extends ResponseStatusException {
 	public function getHttpCode():int {

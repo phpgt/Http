@@ -1,17 +1,17 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
-use Gt\Curl\Curl;
-use Gt\Http\ArrayBuffer;
-use Gt\Http\Blob;
-use Gt\Http\FormData;
-use Gt\Http\Header\ResponseHeaders;
-use Gt\Http\Request;
-use Gt\Http\Response;
-use Gt\Http\StatusCode;
-use Gt\Http\Stream;
-use Gt\Http\Uri;
-use Gt\Json\JsonObject;
+use GT\Curl\Curl;
+use GT\Http\ArrayBuffer;
+use GT\Http\Blob;
+use GT\Http\FormData;
+use GT\Http\Header\ResponseHeaders;
+use GT\Http\Request;
+use GT\Http\Response;
+use GT\Http\StatusCode;
+use GT\Http\Stream;
+use GT\Http\Uri;
+use GT\Json\JSONObject;
 use Gt\Promise\Deferred;
 use PHPUnit\Framework\TestCase;
 
@@ -147,7 +147,7 @@ class ResponseTest extends TestCase {
 
 		$sut = (new Response())->withBody($stream);
 
-		$sut->json()->then(function(JsonObject $json) use(&$actualJson) {
+		$sut->json()->then(function(JSONObject $json) use(&$actualJson) {
 			$actualJson = $json;
 		});
 

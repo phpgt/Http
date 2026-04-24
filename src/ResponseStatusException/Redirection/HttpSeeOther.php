@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\Redirection;
+namespace GT\Http\ResponseStatusException\Redirection;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * The response to the request can be found under another URI using the GET

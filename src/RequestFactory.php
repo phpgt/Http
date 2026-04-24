@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
-use Gt\Http\Header\RequestHeaders;
+use GT\Http\Header\RequestHeaders;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 

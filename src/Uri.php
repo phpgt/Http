@@ -1,5 +1,5 @@
 <?php /** @noinspection RegExpRedundantEscape */
-namespace Gt\Http;
+namespace GT\Http;
 
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
