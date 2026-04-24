@@ -1,5 +1,5 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
 class UriFactory {
 	/** @param array<string, int|string> $parts */

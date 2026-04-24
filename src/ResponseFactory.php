@@ -1,5 +1,5 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
 use Negotiation\Accept;
 use Negotiation\BaseAccept;

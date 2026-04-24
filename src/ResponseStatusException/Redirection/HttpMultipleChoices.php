@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\Redirection;
+namespace GT\Http\ResponseStatusException\Redirection;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * Indicates multiple options for the resource from which the client may choose

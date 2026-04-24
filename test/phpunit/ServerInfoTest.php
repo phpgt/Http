@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
-use Gt\Http\ServerInfo;
+use GT\Http\ServerInfo;
 use PHPUnit\Framework\TestCase;
 
 class ServerInfoTest extends TestCase {

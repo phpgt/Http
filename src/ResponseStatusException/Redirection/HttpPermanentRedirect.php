@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\Redirection;
+namespace GT\Http\ResponseStatusException\Redirection;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * The request and all future requests should be repeated using another URI.

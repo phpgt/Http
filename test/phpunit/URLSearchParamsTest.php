@@ -1,8 +1,8 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
-use Gt\Http\FormData;
-use Gt\Http\URLSearchParams;
+use GT\Http\FormData;
+use GT\Http\URLSearchParams;
 use PHPUnit\Framework\TestCase;
 
 class URLSearchParamsTest extends TestCase {

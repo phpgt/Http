@@ -1,4 +1,4 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
 class UnknownAcceptHeaderException extends HttpException {}

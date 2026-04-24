@@ -1,10 +1,10 @@
 <?php /** @noinspection PhpUnusedPrivateMethodInspection */
-namespace Gt\Http;
+namespace GT\Http;
 
 use GT\Curl\CurlInterface;
-use Gt\Http\Header\ResponseHeaders;
-use Gt\Json\JsonObject;
-use Gt\Json\JsonObjectBuilder;
+use GT\Http\Header\ResponseHeaders;
+use GT\Json\JSONObject;
+use GT\Json\JSONObjectBuilder;
 use Gt\Promise\Deferred;
 use Gt\Promise\Promise;
 use Gt\PropFunc\MagicProp;
@@ -211,7 +211,7 @@ class Response implements ResponseInterface {
 
 	/**
 	 * Takes the Response's stream and reads it to completion. Returns a Promise which resolves with the result
-	 * as a Gt\Http\ArrayBuffer.
+	 * as a GT\Http\ArrayBuffer.
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
@@ -250,7 +250,7 @@ class Response implements ResponseInterface {
 
 	/**
 	 * Takes the Response's stream and reads it to completion. Returns a Promise which resolves with the result
-	 * as a Gt\Http\Blob.
+	 * as a GT\Http\Blob.
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
@@ -286,7 +286,7 @@ class Response implements ResponseInterface {
 
 	/**
 	 * Takes the Response's stream and reads it to completion. Returns a Promise which resolves with the result
-	 * as a Gt\Http\FormData.
+	 * as a GT\Http\FormData.
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
@@ -332,7 +332,7 @@ class Response implements ResponseInterface {
 
 	/**
 	 * Takes the Response's stream and reads it to completion. Returns a Promise which resolves with the result
-	 * as a Gt\Json\JsonObject.
+	 * as a GT\Json\JSONObject.
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
@@ -349,13 +349,13 @@ class Response implements ResponseInterface {
 	}
 
 	/** @param int<1, max> $depth */
-	public function awaitJson(int $depth = 512, int $options = 0):JsonObject {
+	public function awaitJson(int $depth = 512, int $options = 0):JSONObject {
 		$jsonObject = null;
 		if($responseText = $this->getBody()->getContents()) {
 			$jsonObject = $this->jsonFromResponseText($responseText);
 		}
 
-		$this->json($depth, $options)->then(function(JsonObject $resolved) use(&$jsonObject) {
+		$this->json($depth, $options)->then(function(JSONObject $resolved) use(&$jsonObject) {
 			$jsonObject = $resolved;
 		});
 
@@ -363,8 +363,8 @@ class Response implements ResponseInterface {
 	}
 
 	/** @param int<1, max> $depth */
-	private function jsonFromResponseText(string $responseText, int $depth = 512, int $options = 0):JsonObject {
-		$builder = new JsonObjectBuilder($depth, $options);
+	private function jsonFromResponseText(string $responseText, int $depth = 512, int $options = 0):JSONObject {
+		$builder = new JSONObjectBuilder($depth, $options);
 		return $builder->fromJsonString($responseText);
 	}
 

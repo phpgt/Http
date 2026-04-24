@@ -27,11 +27,13 @@
 
 	"autoload": {
 		"psr-4": {
+			"GT\\Http\\": "./src",
 			"Gt\\Http\\": "./src"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
+			"GT\\Http\\Test\\": "./test/phpunit",
 			"Gt\\Http\\Test\\": "./test/phpunit"
 		}
 	},

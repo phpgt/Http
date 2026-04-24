@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
-use Gt\Http\Header\Headers;
+use GT\Http\Header\Headers;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 

@@ -1,10 +1,10 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
 use Exception;
-use Gt\Http\Stream;
-use Gt\Http\StreamException;
-use Gt\Http\StreamNotOpenableException;
+use GT\Http\Stream;
+use GT\Http\StreamException;
+use GT\Http\StreamNotOpenableException;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestStatus\Warning;
 use RecursiveDirectoryIterator;

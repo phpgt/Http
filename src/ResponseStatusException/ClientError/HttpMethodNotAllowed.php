@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException;
+namespace GT\Http\ResponseStatusException;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * A request method is not supported for the requested resource; for example, a

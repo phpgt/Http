@@ -1,5 +1,5 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
 /**
  * Resolves a URI reference in the context of a base URI and the opposite way.

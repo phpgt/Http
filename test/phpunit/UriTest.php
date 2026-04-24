@@ -1,11 +1,11 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
 use Exception;
-use Gt\Http\PortOutOfBoundsException;
-use Gt\Http\Uri;
-use Gt\Http\UriFactory;
-use Gt\Http\UriParseErrorException;
+use GT\Http\PortOutOfBoundsException;
+use GT\Http\Uri;
+use GT\Http\UriFactory;
+use GT\Http\UriParseErrorException;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 

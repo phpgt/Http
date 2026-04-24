@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\Redirection;
+namespace GT\Http\ResponseStatusException\Redirection;
 
-use Gt\Http\ResponseStatusException\ResponseStatusException;
+use GT\Http\ResponseStatusException\ResponseStatusException;
 
 abstract class RedirectionException extends ResponseStatusException {
 }

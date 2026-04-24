@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ClientError;
+namespace GT\Http\ResponseStatusException\ClientError;
 
-use Gt\Http\ResponseStatusException\ResponseStatusException;
+use GT\Http\ResponseStatusException\ResponseStatusException;
 
 // phpmd:ignore
 abstract class ClientErrorException extends ResponseStatusException {}
