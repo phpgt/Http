@@ -1,8 +1,8 @@
 <?php
-namespace Gt\Http\Test\Header;
+namespace GT\Http\Test\Header;
 
-use Gt\Http\Header\HeaderLine;
-use Gt\Http\Header\Headers;
+use GT\Http\Header\HeaderLine;
+use GT\Http\Header\Headers;
 use Gt\TypeSafeGetter\TypeSafeGetter;
 use PHPUnit\Framework\TestCase;
 

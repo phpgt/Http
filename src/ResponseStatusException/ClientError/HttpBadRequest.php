@@ -1,8 +1,8 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ClientError;
+namespace GT\Http\ResponseStatusException\ClientError;
 
-use Gt\Http\StatusCode;
-use Gt\Http\ResponseStatusException\ResponseStatusException;
+use GT\Http\StatusCode;
+use GT\Http\ResponseStatusException\ResponseStatusException;
 
 /**
  * The server cannot or will not process the request due to an apparent client

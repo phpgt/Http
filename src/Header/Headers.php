@@ -1,5 +1,5 @@
 <?php
-namespace Gt\Http\Header;
+namespace GT\Http\Header;
 
 use Countable;
 use Gt\TypeSafeGetter\NullableTypeSafeGetter;

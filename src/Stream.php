@@ -1,5 +1,5 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 
 use Exception;
 use Psr\Http\Message\StreamInterface;

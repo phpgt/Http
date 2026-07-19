@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException;
+namespace GT\Http\ResponseStatusException;
 
-use Gt\Http\HttpException;
+use GT\Http\HttpException;
 
 abstract class ResponseStatusException extends HttpException {
 	public function __construct(string $message = "") {

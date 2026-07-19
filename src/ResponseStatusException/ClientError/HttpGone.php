@@ -1,8 +1,8 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ClientError;
+namespace GT\Http\ResponseStatusException\ClientError;
 
-use Gt\Http\StatusCode;
-use Gt\Http\ResponseStatusException\ResponseStatusException;
+use GT\Http\StatusCode;
+use GT\Http\ResponseStatusException\ResponseStatusException;
 
 class HttpGone extends ResponseStatusException {
 	public function getHttpCode():int {

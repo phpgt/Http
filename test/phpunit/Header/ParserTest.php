@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\Test\Header;
+namespace GT\Http\Test\Header;
 
-use Gt\Http\Header\Parser;
+use GT\Http\Header\Parser;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase {

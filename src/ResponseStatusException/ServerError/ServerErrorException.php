@@ -1,6 +1,6 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ServerError;
+namespace GT\Http\ResponseStatusException\ServerError;
 
-use Gt\Http\ResponseStatusException\ResponseStatusException;
+use GT\Http\ResponseStatusException\ResponseStatusException;
 
 abstract class ServerErrorException extends ResponseStatusException {}

@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ServerError;
+namespace GT\Http\ResponseStatusException\ServerError;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * The server is unable to store the representation needed to complete the

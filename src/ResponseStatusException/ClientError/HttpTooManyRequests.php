@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ClientError;
+namespace GT\Http\ResponseStatusException\ClientError;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * The user has sent too many requests in a given amount of time. Intended

@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ServerError;
+namespace GT\Http\ResponseStatusException\ServerError;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * Further extensions to the request are required for the server to fulfil it.

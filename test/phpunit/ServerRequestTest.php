@@ -1,11 +1,11 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
-use Gt\Http\Header\RequestHeaders;
-use Gt\Http\ServerInfo;
-use Gt\Http\ServerRequest;
-use Gt\Http\Uri;
-use Gt\Input\InputData\Datum\FileUpload;
+use GT\Http\Header\RequestHeaders;
+use GT\Http\ServerInfo;
+use GT\Http\ServerRequest;
+use GT\Http\Uri;
+use GT\Input\InputData\Datum\FileUpload;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

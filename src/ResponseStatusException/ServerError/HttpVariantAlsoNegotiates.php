@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ServerError;
+namespace GT\Http\ResponseStatusException\ServerError;
 
-use Gt\Http\StatusCode;
+use GT\Http\StatusCode;
 
 /**
  * Transparent content negotiation for the request results in a circular

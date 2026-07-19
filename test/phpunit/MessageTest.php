@@ -1,11 +1,11 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
-use Gt\Http\Header\HeaderLine;
-use Gt\Http\Header\RequestHeaders;
-use Gt\Http\Request;
-use Gt\Http\RequestMethod;
-use Gt\Http\Uri;
+use GT\Http\Header\HeaderLine;
+use GT\Http\Header\RequestHeaders;
+use GT\Http\Request;
+use GT\Http\RequestMethod;
+use GT\Http\Uri;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;

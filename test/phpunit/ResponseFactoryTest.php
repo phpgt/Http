@@ -1,10 +1,10 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
-use Gt\Http\Request;
-use Gt\Http\Response;
-use Gt\Http\ResponseFactory;
-use Gt\Http\UnknownAcceptHeaderException;
+use GT\Http\Request;
+use GT\Http\Response;
+use GT\Http\ResponseFactory;
+use GT\Http\UnknownAcceptHeaderException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

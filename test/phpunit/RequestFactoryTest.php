@@ -1,8 +1,8 @@
 <?php
-namespace Gt\Http\Test;
+namespace GT\Http\Test;
 
-use Gt\Http\InvalidRequestMethodHttpException;
-use Gt\Http\RequestFactory;
+use GT\Http\InvalidRequestMethodHttpException;
+use GT\Http\RequestFactory;
 use PHPUnit\Framework\TestCase;
 
 class RequestFactoryTest extends TestCase {

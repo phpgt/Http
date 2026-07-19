@@ -1,5 +1,5 @@
 <?php
-namespace Gt\Http;
+namespace GT\Http;
 use Psr\Http\Message\UriInterface;
 
 /**

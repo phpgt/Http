@@ -1,7 +1,7 @@
 <?php
-namespace Gt\Http\Test\Header;
+namespace GT\Http\Test\Header;
 
-use Gt\Http\Header\HeaderLine;
+use GT\Http\Header\HeaderLine;
 use PHPUnit\Framework\TestCase;
 
 class HeaderLineTest extends TestCase {

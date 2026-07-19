@@ -1,8 +1,8 @@
 <?php
-namespace Gt\Http\ResponseStatusException\ClientError;
+namespace GT\Http\ResponseStatusException\ClientError;
 
-use Gt\Http\StatusCode;
-use Gt\Http\ResponseStatusException\ResponseStatusException;
+use GT\Http\StatusCode;
+use GT\Http\ResponseStatusException\ResponseStatusException;
 
 /**
  * A request method is not supported for the requested resource; for example, a
