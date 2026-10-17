@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2fac02bbd38a4f5a8b7f59482c569f6",
+    "content-hash": "73f477bf31f50759d25b7e0a9eddb002",
     "packages": [
         {
             "name": "justinrainbow/json-schema",
@@ -489,28 +489,29 @@
         },
         {
             "name": "phpgt/propfunc",
-            "version": "v1.0.1",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/PhpGt/PropFunc.git",
-                "reference": "091213649e89ff22d1ef640b46fbee5215c65520"
+                "url": "https://github.com/phpgt/PropFunc.git",
+                "reference": "036a100a3426df47560eb1c9131486c23b8a5a88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/PropFunc/zipball/091213649e89ff22d1ef640b46fbee5215c65520",
-                "reference": "091213649e89ff22d1ef640b46fbee5215c65520",
+                "url": "https://api.github.com/repos/phpgt/PropFunc/zipball/036a100a3426df47560eb1c9131486c23b8a5a88",
+                "reference": "036a100a3426df47560eb1c9131486c23b8a5a88",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0"
+                "php": ">=8.1"
             },
             "require-dev": {
-                "phpstan/phpstan": ">=0.12",
-                "phpunit/phpunit": ">=9.3"
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^10.5"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
+                    "GT\\PropFunc\\": "./src",
                     "Gt\\PropFunc\\": "./src"
                 }
             },
@@ -528,8 +529,8 @@
             ],
             "description": "Property accessor and mutator functions.",
             "support": {
-                "issues": "https://github.com/PhpGt/PropFunc/issues",
-                "source": "https://github.com/PhpGt/PropFunc/tree/v1.0.1"
+                "issues": "https://github.com/phpgt/PropFunc/issues",
+                "source": "https://github.com/phpgt/PropFunc/tree/v2.0.0"
             },
             "funding": [
                 {
@@ -537,7 +538,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-03-23T12:46:44+00:00"
+            "time": "2026-04-20T17:29:29+00:00"
         },
         {
             "name": "phpgt/typesafegetter",
