@@ -15,10 +15,14 @@ class Request implements RequestInterface {
 
 	/** @SuppressWarnings("StaticAccess") */
 	public function __construct(
-		string $method,
+		RequestMethod|string $method,
 		UriInterface $uri,
 		RequestHeaders $headers
 	) {
+		if($method instanceof RequestMethod) {
+			$method = $method->name;
+		}
+
 		$this->method = RequestMethod::filterMethodName($method);
 		$this->uri = $uri;
 		$this->headers = $headers;
