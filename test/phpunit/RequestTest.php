@@ -53,6 +53,18 @@ class RequestTest extends TestCase {
 		);
 	}
 
+	public function testConstructorAcceptsRequestMethodCases():void {
+		foreach(RequestMethod::cases() as $method) {
+			$request = new Request(
+				$method,
+				self::getUriMock(),
+				self::getHeadersMock()
+			);
+
+			self::assertSame($method->name, $request->getMethod());
+		}
+	}
+
 	public function testWithMethod() {
 		$req = new Request(
 			"get",
