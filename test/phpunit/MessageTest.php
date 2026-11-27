@@ -3,6 +3,10 @@ namespace GT\Http\Test;
 
 use GT\Http\Header\HeaderLine;
 use GT\Http\Header\RequestHeaders;
+use GT\Http\Header\ResponseHeaders;
+use GT\Http\Response;
+use GT\Http\Stream;
+use GT\Http\InvalidProtocolHttpException;
 use GT\Http\Request;
 use GT\Http\RequestMethod;
 use GT\Http\Uri;
@@ -159,5 +163,48 @@ class MessageTest extends TestCase {
 		}
 
 		return $headers;
+	}
+	public function testProtocolVersionChangeLeavesOriginalUntouched():void {
+		$original = (new Response())->withProtocolVersion("1.1");
+		$updated = $original->withProtocolVersion("2");
+		self::assertNotSame($original, $updated);
+		self::assertSame("1.1", $original->getProtocolVersion());
+		self::assertSame("2", $updated->getProtocolVersion());
+	}
+
+	public function testInvalidProtocolVersionIsRejected():void {
+		$response = (new Response())->withProtocolVersion("1.1");
+		try {
+			$response->withProtocolVersion("invalid");
+			self::fail("Invalid protocol must be rejected");
+		}
+		catch(InvalidProtocolHttpException) {
+			self::assertSame("1.1", $response->getProtocolVersion());
+		}
+	}
+
+	public function testHeaderLookupIsCaseInsensitiveAndMissingHeadersAreEmpty():void {
+		$headers = new ResponseHeaders();
+		$headers->add("X-Example", "first", "second");
+		$response = new Response(headers: $headers);
+		self::assertTrue($response->hasHeader("x-example"));
+		self::assertFalse($response->hasHeader("Missing"));
+		self::assertSame(["first", "second"], $response->getHeader("X-EXAMPLE"));
+		self::assertSame([], $response->getHeader("Missing"));
+		self::assertSame("", $response->getHeaderLine("Missing"));
+		self::assertSame(["X-Example" => ["first", "second"]], $response->getHeaders());
+	}
+
+	public function testReplacingBodyPreservesOriginalStream():void {
+		$response = new Response();
+		$originalBody = $response->getBody();
+		$originalBody->write("original");
+		$replacement = new Stream();
+		$replacement->write("replacement");
+		$updated = $response->withBody($replacement);
+		self::assertSame($originalBody, $response->getBody());
+		self::assertSame($replacement, $updated->getBody());
+		self::assertSame("original", (string)$response->getBody());
+		self::assertSame("replacement", (string)$updated->getBody());
 	}
 }
