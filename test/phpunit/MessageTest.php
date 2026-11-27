@@ -6,12 +6,13 @@ use GT\Http\Header\RequestHeaders;
 use GT\Http\Request;
 use GT\Http\RequestMethod;
 use GT\Http\Uri;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 
 class MessageTest extends TestCase {
-	/** @dataProvider data_request */
+	#[DataProvider("data_request")]
 	public function testGetProtocolVersionRequest(
 		string $method,
 		string $uriString,

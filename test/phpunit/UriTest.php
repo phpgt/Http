@@ -6,6 +6,7 @@ use GT\Http\PortOutOfBoundsException;
 use GT\Http\Uri;
 use GT\Http\UriFactory;
 use GT\Http\UriParseErrorException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -43,13 +44,13 @@ class UriTest extends TestCase {
 		$this->assertSame('https://user:pass@example.com:8080/path/123?q=abc#test', (string)$uri);
 	}
 
-	/** @dataProvider getValidUris */
+	#[DataProvider("getValidUris")]
 	public function testValidUrisStayValid($input) {
 		$uri = new Uri($input);
 		self::assertSame($input, (string)$uri);
 	}
 
-	/** @dataProvider getValidUris */
+	#[DataProvider("getValidUris")]
 	public function testFromParts($input) {
 		$uri = (new UriFactory())->createFromParts(parse_url($input));
 		self::assertSame($input, (string)$uri);
@@ -83,7 +84,7 @@ class UriTest extends TestCase {
 		];
 	}
 
-	/** @dataProvider getInvalidUris */
+	#[DataProvider("getInvalidUris")]
 	public function testInvalidUrisThrowException($invalidUri) {
 		self::expectException(UriParseErrorException::class);
 		new Uri($invalidUri);
@@ -255,9 +256,7 @@ class UriTest extends TestCase {
 		$this->assertSame('admin@10.10.0.8/status.xml', $uri->getPath());
 	}
 
-	/**
-	 * @dataProvider getPortTestCases
-	 */
+	#[DataProvider("getPortTestCases")]
 	public function testIsDefaultPort($scheme, $port, $isDefaultPort) {
 		$uri = (new Uri())
 			->withScheme($scheme)
@@ -562,9 +561,7 @@ class UriTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider uriComponentsEncodingProvider
-	 */
+	#[DataProvider("uriComponentsEncodingProvider")]
 	public static function testUriComponentsGetEncodedProperly(
 		$input,
 		$path,

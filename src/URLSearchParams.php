@@ -2,9 +2,8 @@
 namespace GT\Http;
 
 use Countable;
-use Generator;
-use Gt\PropFunc\MagicProp;
-use Gt\TypeSafeGetter\NullableTypeSafeGetter;
+use GT\PropFunc\MagicProp;
+use GT\TypeSafeGetter\NullableTypeSafeGetter;
 use Iterator;
 use Stringable;
 
@@ -53,7 +52,7 @@ class URLSearchParams extends KeyValuePairStore implements Stringable, Countable
 		$this->rewind();
 	}
 
-	public function __prop_get_size():int {
+	public function __propGetSize():int {
 		return count($this);
 	}
 

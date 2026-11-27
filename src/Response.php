@@ -50,18 +50,18 @@ class Response implements ResponseInterface {
 	}
 
 	/** @phpstan-ignore-next-line */
-	private function __prop_get_headers():ResponseHeaders {
+	private function __propGetHeaders():ResponseHeaders {
 		return $this->getResponseHeaders();
 	}
 
 	/** @phpstan-ignore-next-line */
-	private function __prop_get_ok():bool {
+	private function __propGetOk():bool {
 		return ($this->getStatusCode() >= 200
 			&& $this->getStatusCode() < 300);
 	}
 
 	/** @phpstan-ignore-next-line */
-	private function __prop_get_redirected():bool {
+	private function __propGetRedirected():bool {
 		if(!isset($this->curl)) {
 			return false;
 		}
@@ -73,17 +73,17 @@ class Response implements ResponseInterface {
 	}
 
 	/** @phpstan-ignore-next-line */
-	private function __prop_get_status():int {
+	private function __propGetStatus():int {
 		return $this->getStatusCode();
 	}
 
 	/** @phpstan-ignore-next-line */
-	private function __prop_get_statusText():?string {
+	private function __propGetStatusText():?string {
 		return StatusCode::REASON_PHRASE[$this->status] ?? null;
 	}
 
 	/** @phpstan-ignore-next-line */
-	private function __prop_get_uri():string {
+	private function __propGetUri():string {
 		if(!isset($this->curl)) {
 			return $this->request->getUri();
 		}
@@ -91,12 +91,12 @@ class Response implements ResponseInterface {
 	}
 
 	/** @phpstan-ignore-next-line */
-	private function __prop_get_url():string {
+	private function __propGetUrl():string {
 		return $this->uri;
 	}
 
 	/** @phpstan-ignore-next-line */
-	private function __prop_get_type():string {
+	private function __propGetType():string {
 		return $this->headers->get("content-type")?->getValue() ?? "";
 	}
 
