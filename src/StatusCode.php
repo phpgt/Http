@@ -1,6 +1,8 @@
 <?php
 namespace GT\Http;
 
+use InvalidArgumentException;
+
 class StatusCode {
 	const int CONTINUE = 100;
 	const int SWITCHING_PROTOCOLS = 101;
@@ -139,4 +141,28 @@ class StatusCode {
 		self::NOT_EXTENDED => "Not Extended",
 		self::NETWORK_AUTHENTICATION_REQUIRED => "Network Authentication Required",
 	];
+
+	private ?int $code = null;
+
+	public function get():?int {
+		return $this->code;
+	}
+
+	public function set(int $code):void {
+		if($code < 100 || $code > 599) {
+			throw new InvalidArgumentException(
+				"HTTP status code must be between 100 and 599: $code"
+			);
+		}
+
+		$this->code = $code;
+	}
+
+	public function reset():void {
+		$this->code = null;
+	}
+
+	public function getReasonPhrase():string {
+		return self::REASON_PHRASE[$this->code ?? 0] ?? "";
+	}
 }
