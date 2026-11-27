@@ -7,7 +7,7 @@ use GT\Http\Request;
 use GT\Http\RequestMethod;
 use GT\Http\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 
@@ -18,13 +18,13 @@ class MessageTest extends TestCase {
 		string $uriString,
 		array $headersArray
 	) {
-		/** @var MockObject|Uri $uri */
-		$uri = self::createMock(UriInterface::class);
+		/** @var Stub|UriInterface $uri */
+		$uri = self::createStub(UriInterface::class);
 		$uri->method("__toString")
 			->willReturn($uriString);
 
-		/** @var MockObject|RequestHeaders $headers */
-		$headers = self::createMock(RequestHeaders::class);
+		/** @var Stub|RequestHeaders $headers */
+		$headers = self::createStub(RequestHeaders::class);
 		$headers->method("getFirst")
 			->willReturn($headersArray[0]);
 
@@ -57,7 +57,7 @@ class MessageTest extends TestCase {
 			->method("getValuesCommaSeparated")
 			->willReturn($headerValue);
 
-		$uri = self::createMock(Uri::class);
+		$uri = self::createStub(Uri::class);
 		$headers = self::createMock(RequestHeaders::class);
 		$headers->expects(self::once())
 			->method("get")

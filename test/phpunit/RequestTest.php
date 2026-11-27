@@ -7,7 +7,7 @@ use GT\Http\InvalidRequestMethodHttpException;
 use GT\Http\Request;
 use GT\Http\RequestMethod;
 use GT\Http\Uri;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase {
@@ -98,7 +98,7 @@ class RequestTest extends TestCase {
 	}
 
 	public function testWithUriNewHost() {
-		$headers = self::getHeadersMock();
+		$headers = self::createMock(RequestHeaders::class);
 		$headers->expects($this->once())
 			->method("add")
 			->with("Host", "example2.com");
@@ -147,12 +147,12 @@ class RequestTest extends TestCase {
 		);
 	}
 
-	/** @return MockObject|Uri */
-	protected function getUriMock(string $uriPath = ""):MockObject {
+	/** @return Stub|Uri */
+	protected function getUriMock(string $uriPath = ""):Stub {
 		$partPath = parse_url($uriPath, PHP_URL_PATH);
 		$partQuery = parse_url($uriPath, PHP_URL_QUERY);
 		$partHost = parse_url($uriPath, PHP_URL_HOST);
-		$uri = self::createMock(Uri::class);
+		$uri = self::createStub(Uri::class);
 		$uri->method("getPath")
 			->willReturn($partPath ?? "");
 		$uri->method("getQuery")
@@ -164,9 +164,9 @@ class RequestTest extends TestCase {
 		return $uri;
 	}
 
-	/** @return MockObject|RequestHeaders */
-	protected function getHeadersMock():MockObject {
-		$headers = self::createMock(RequestHeaders::class);
+	/** @return Stub|RequestHeaders */
+	protected function getHeadersMock():Stub {
+		$headers = self::createStub(RequestHeaders::class);
 		return $headers;
 	}
 }

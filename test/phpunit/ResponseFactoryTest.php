@@ -11,8 +11,8 @@ use PHPUnit\Framework\TestCase;
 class ResponseFactoryTest extends TestCase {
 	public function testCreateNoHeaderString() {
 		self::expectException(UnknownAcceptHeaderException::class);
-		/** @var MockObject|Request $request */
-		$request = self::createMock(Request::class);
+		/** @var Request $request */
+		$request = self::createStub(Request::class);
 		ResponseFactory::create($request);
 	}
 
@@ -20,17 +20,19 @@ class ResponseFactoryTest extends TestCase {
 		self::expectException(UnknownAcceptHeaderException::class);
 		/** @var MockObject|Request $request */
 		$request = self::createMock(Request::class);
-		$request->method("getHeaderLine")
+		$request->expects(self::once())
+			->method("getHeaderLine")
 			->with("accept")
 			->willReturn("text/html");
 		ResponseFactory::create($request);
 	}
 
 	public function testCreateAfterRegisteringResponseClass() {
-		$mockResponseClass = self::createMock(Response::class);
+		$mockResponseClass = self::createStub(Response::class);
 		/** @var MockObject|Request $request */
 		$request = self::createMock(Request::class);
-		$request->method("getHeaderLine")
+		$request->expects(self::once())
+			->method("getHeaderLine")
 			->with("accept")
 			->willReturn("test/example");
 		ResponseFactory::registerResponseClass(
@@ -45,10 +47,11 @@ class ResponseFactoryTest extends TestCase {
 	}
 
 	public function testRegisterResponseClassDefault() {
-		$mockResponseClass = self::createMock(Response::class);
+		$mockResponseClass = self::createStub(Response::class);
 		/** @var MockObject|Request $request */
 		$request = self::createMock(Request::class);
-		$request->method("getHeaderLine")
+		$request->expects(self::once())
+			->method("getHeaderLine")
 			->with("accept")
 			->willReturn(ResponseFactory::DEFAULT_ACCEPT);
 		ResponseFactory::registerResponseClass(

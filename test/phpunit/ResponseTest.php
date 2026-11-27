@@ -106,7 +106,7 @@ class ResponseTest extends TestCase {
 		$uri->method("__toString")
 			->willReturn($expectedRelativePath);
 
-		$request = self::createMock(Request::class);
+		$request = self::createStub(Request::class);
 		$request->method("getUri")
 			->willReturn($uri);
 
@@ -128,7 +128,7 @@ class ResponseTest extends TestCase {
 		$uri->method("__toString")
 			->willReturn($expectedRelativePath);
 
-		$request = self::createMock(Request::class);
+		$request = self::createStub(Request::class);
 		$request->method("getUri")
 			->willReturn($uri);
 
