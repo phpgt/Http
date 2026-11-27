@@ -3,7 +3,7 @@ namespace GT\Http\Test\Header;
 
 use GT\Http\Header\HeaderLine;
 use GT\Http\Header\Headers;
-use Gt\TypeSafeGetter\TypeSafeGetter;
+use GT\TypeSafeGetter\TypeSafeGetter;
 use PHPUnit\Framework\TestCase;
 
 class HeadersTest extends TestCase {

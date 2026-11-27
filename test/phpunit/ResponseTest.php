@@ -5,6 +5,9 @@ use GT\Curl\Curl;
 use GT\Http\ArrayBuffer;
 use GT\Http\Blob;
 use GT\Http\FormData;
+use GT\Http\HttpException;
+use GT\Http\IntegrityMismatchException;
+use GT\Http\InvalidIntegrityAlgorithmException;
 use GT\Http\Header\ResponseHeaders;
 use GT\Http\Request;
 use GT\Http\Response;
@@ -12,7 +15,7 @@ use GT\Http\StatusCode;
 use GT\Http\Stream;
 use GT\Http\Uri;
 use GT\Json\JSONObject;
-use Gt\Promise\Deferred;
+use GT\Promise\Deferred;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase {
@@ -106,7 +109,7 @@ class ResponseTest extends TestCase {
 		$uri->method("__toString")
 			->willReturn($expectedRelativePath);
 
-		$request = self::createMock(Request::class);
+		$request = self::createStub(Request::class);
 		$request->method("getUri")
 			->willReturn($uri);
 
@@ -128,7 +131,7 @@ class ResponseTest extends TestCase {
 		$uri->method("__toString")
 			->willReturn($expectedRelativePath);
 
-		$request = self::createMock(Request::class);
+		$request = self::createStub(Request::class);
 		$request->method("getUri")
 			->willReturn($uri);
 
@@ -350,5 +353,90 @@ class ResponseTest extends TestCase {
 			->willReturn(0);
 		$sut = new Response(200, curl: $curl);
 		self::assertFalse($sut->redirected);
+	}
+	public function testStatusPropertiesTrackChangesAndSuccessBoundaries():void {
+		$response = new Response();
+		self::assertSame(0, $response->status);
+		self::assertFalse($response->ok);
+		self::assertNull($response->statusText);
+
+		foreach([199 => false, 200 => true, 299 => true, 300 => false, 500 => false] as $code => $ok) {
+			$response->setStatus($code);
+			self::assertSame($code, $response->status);
+			self::assertSame($ok, $response->ok);
+		}
+
+		$response->setStatus(StatusCode::NOT_FOUND);
+		self::assertSame("Not Found", $response->statusText);
+		$response->setStatus(StatusCode::OK);
+		self::assertSame("OK", $response->statusText);
+	}
+
+	public function testContentTypePropertyTracksHeadersCaseInsensitively():void {
+		$headers = new ResponseHeaders();
+		$response = new Response(headers: $headers);
+		self::assertSame($headers, $response->headers);
+		self::assertSame("", $response->type);
+		$headers->set("Content-Type", "application/json");
+		self::assertSame("application/json", $response->type);
+		$headers->set("content-type", "text/plain");
+		self::assertSame("text/plain", $response->type);
+	}
+
+	public function testUrlPropertiesUseEffectiveCurlUrl():void {
+		$curl = self::createMock(Curl::class);
+		$curl->expects(self::exactly(2))
+			->method("getInfo")
+			->with(CURLINFO_EFFECTIVE_URL)
+			->willReturn("https://example.com/redirected?key=value");
+		$response = new Response(curl: $curl);
+		self::assertSame("https://example.com/redirected?key=value", $response->uri);
+		self::assertSame("https://example.com/redirected?key=value", $response->url);
+	}
+
+	public function testDeferredResponseResolvesWholeBodyAndPreservesReadPosition():void {
+		foreach([null, "sha256-" . hash("sha256", "complete body")] as $integrity) {
+			$response = new Response();
+			$deferred = $response->startDeferredResponse(self::createStub(Curl::class));
+			$resolved = null;
+			$deferred->getPromise()->then(function(string $body)use(&$resolved) {
+				$resolved = $body;
+			});
+			$response->getBody()->write("complete body");
+			$response->getBody()->seek(4);
+			self::assertNull($resolved);
+			$response->endDeferredResponse($integrity);
+			self::assertSame("complete body", $resolved);
+			self::assertSame(4, $response->getBody()->tell());
+		}
+	}
+
+	public function testDeferredIntegrityFailureDoesNotResolveAndCanBeRetried():void {
+		$response = new Response();
+		$deferred = $response->startDeferredResponse(self::createStub(Curl::class));
+		$resolved = null;
+		$deferred->getPromise()->then(function(string $body)use(&$resolved) {
+			$resolved = $body;
+		});
+		$response->getBody()->write("original body");
+		$response->getBody()->seek(3);
+
+		foreach([
+			"unknownalgorithm-hash" => InvalidIntegrityAlgorithmException::class,
+			"sha256-" . hash("sha256", "tampered body") => IntegrityMismatchException::class,
+		] as $integrity => $exceptionClass) {
+			try {
+				$response->endDeferredResponse($integrity);
+				self::fail("Integrity validation must reject this body");
+			}
+			catch(HttpException $exception) {
+				self::assertInstanceOf($exceptionClass, $exception);
+			}
+			self::assertNull($resolved);
+			self::assertSame(3, $response->getBody()->tell());
+		}
+
+		$response->endDeferredResponse("sha256-" . hash("sha256", "original body"));
+		self::assertSame("original body", $resolved);
 	}
 }

@@ -7,6 +7,7 @@ use GT\Http\ServerRequest;
 use GT\Http\Uri;
 use GT\Input\InputData\Datum\FileUpload;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 class ServerRequestTest extends TestCase {
@@ -159,8 +160,8 @@ class ServerRequestTest extends TestCase {
 		);
 		self::assertEmpty($sutEmpty->getUploadedFiles());
 
-		$file1 = self::createMock(FileUpload::class);
-		$file2 = self::createMock(FileUpload::class);
+		$file1 = self::createStub(FileUpload::class);
+		$file2 = self::createStub(FileUpload::class);
 
 		$sutFull = $sutEmpty->withUploadedFiles([
 			$file1,
@@ -244,8 +245,8 @@ class ServerRequestTest extends TestCase {
 	}
 
 	protected function getServerRequest(
-		string $method = null,
-		string $uri = null,
+		?string $method = null,
+		?string $uri = null,
 		array $headerArray = [],
 		array $serverArray = [],
 		array $globalsArray = [],
@@ -262,7 +263,7 @@ class ServerRequestTest extends TestCase {
 			PHP_QUERY_RFC3986
 		);
 
-		/** @var MockObject|ServerInfo $serverInfo */
+		/** @var Stub|ServerInfo $serverInfo */
 		$serverInfo = self::getMockServerInfo($serverArray);
 
 		return new ServerRequest(
@@ -276,21 +277,21 @@ class ServerRequestTest extends TestCase {
 		);
 	}
 
-	/** @return MockObject|Uri */
-	protected function getMockUri(string $uriPath):MockObject {
-		$mock = self::createMock(Uri::class);
+	/** @return Stub|Uri */
+	protected function getMockUri(string $uriPath):Stub {
+		$mock = self::createStub(Uri::class);
 		return $mock;
 	}
 
-	/** @return MockObject|RequestHeaders */
-	protected function getMockHeaders(array $headers = []):MockObject {
-		$mock = self::createMock(RequestHeaders::class);
+	/** @return Stub|RequestHeaders */
+	protected function getMockHeaders(array $headers = []):Stub {
+		$mock = self::createStub(RequestHeaders::class);
 		return $mock;
 	}
 
-	/** @return MockObject|ServerInfo */
-	protected function getMockServerInfo(array $server = []):MockObject {
-		$mock = self::createMock(ServerInfo::class);
+	/** @return Stub|ServerInfo */
+	protected function getMockServerInfo(array $server = []):Stub {
+		$mock = self::createStub(ServerInfo::class);
 		$mock->method("getParams")
 			->willReturn($server);
 		$mock->method("getQueryParams")
@@ -300,7 +301,7 @@ class ServerRequestTest extends TestCase {
 			});
 		$mock->method("withQueryParams")
 			->willReturnCallback(function($params)use($mock) {
-				$clone = self::createMock(ServerInfo::class);
+				$clone = self::createStub(ServerInfo::class);
 				$clone->method("getQueryParams")
 					->willReturn($params);
 				return $clone;

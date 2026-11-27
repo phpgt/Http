@@ -2,8 +2,8 @@
 namespace GT\Http\Header;
 
 use Countable;
-use Gt\TypeSafeGetter\NullableTypeSafeGetter;
-use Gt\TypeSafeGetter\TypeSafeGetter;
+use GT\TypeSafeGetter\NullableTypeSafeGetter;
+use GT\TypeSafeGetter\TypeSafeGetter;
 use Iterator;
 
 /**

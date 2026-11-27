@@ -48,13 +48,13 @@ class URLSearchParamsTest extends TestCase {
 	}
 
 	public function testToString_formDataOptionsEmpty():void {
-		$formData = self::createMock(FormData::class);
+		$formData = self::createStub(FormData::class);
 		$sut = new URLSearchParams($formData);
 		self::assertSame("", (string)$sut);
 	}
 
 	public function testToString_formDataOptions():void {
-		$formData = self::createMock(FormData::class);
+		$formData = self::createStub(FormData::class);
 		$formData->method("valid")
 			->willReturnOnConsecutiveCalls(true, true, true, false);
 		$formData->method("key")
