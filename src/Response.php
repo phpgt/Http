@@ -5,9 +5,9 @@ use GT\Curl\CurlInterface;
 use GT\Http\Header\ResponseHeaders;
 use GT\Json\JSONObject;
 use GT\Json\JSONObjectBuilder;
-use Gt\Promise\Deferred;
-use Gt\Promise\Promise;
-use Gt\PropFunc\MagicProp;
+use GT\Promise\Deferred;
+use GT\Promise\Promise;
+use GT\PropFunc\MagicProp;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 

@@ -12,7 +12,7 @@ use GT\Http\StatusCode;
 use GT\Http\Stream;
 use GT\Http\Uri;
 use GT\Json\JSONObject;
-use Gt\Promise\Deferred;
+use GT\Promise\Deferred;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase {

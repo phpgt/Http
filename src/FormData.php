@@ -5,7 +5,7 @@ use DOMElement;
 use DOMNodeList;
 use DOMXPath;
 use Generator;
-use Gt\TypeSafeGetter\NullableTypeSafeGetter;
+use GT\TypeSafeGetter\NullableTypeSafeGetter;
 use SplFileObject;
 use Stringable;
 use Countable;
